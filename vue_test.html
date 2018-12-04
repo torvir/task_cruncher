@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="row">
+                <button type="button" class="btn btn-info" v-for="category in baseCategories" v-bind:key="category.id" v-bind:class="['category-button', { active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
+                    {{ category.name }} </button>
+                &nbsp; &nbsp;
+                <button type="button" class="btn btn-secondary" v-for="category in categories" v-bind:key="category.id" v-bind:class="['category-button', { active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
+                    {{ category.name }} </button>
+            </div>
+            <br>
+            <div class="row">
+                <i class="far fa-plus-square fa-2x" @click="showAddForm = !showAddForm"></i>
+            </div>
+            <form v-if="showAddForm">
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="inputSubject">Subject</label>
+                        <input type="text" class="form-control" id="inputSubject" placeholder="Task subject">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="inputComment">Comment</label>
+                        <textarea rows="4" class="form-control" id="inputComment" placeholder="Comment">
+                        </textarea>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="inputLog">Log</label>
+                        <textarea rows="4" class="form-control" id="inputLog" placeholder="Log">
+                        </textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </form>
+            <br>
+            <table class="table table-hover">
+                <thead>
+                    <tr class="row">
+                        <th class="col-1">Today</th>
+                        <th class="col-1">Done</th>
+                        <th class="col-8">Subject</th>
+                        <th class="col-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row" v-for="task in filteredTasks" :key="task.id">
+                        <template v-if="task.archived">
+                            <td class="col-1">
+                                <i class="text-muted far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}"></i>
+                            </td>
+                            <td class="col-1">
+                                <i class="text-muted far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}"></i>
+                            </td>
+                            <td class="col-8 text-danger">
+                                <del v-if="task.done">{{ task.subject }}</del>
+                                <b v-else>{{ task.subject }}</b>
+                            </td>
+                            <td class="col-2">
+                                <i class="fas fa-undo" @click="onArchive(task)"></i>
+                                <i class="fas fa-times" @click="onDelete(task.id)"></i>
+                            </td>
+                        </template>
+                        <template v-else>
+                            <td class="col-1">
+                                <i class="far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}" @click="onToday(task)"></i>
+                            </td>
+                            <td class="col-1">
+                                <i class="far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}" @click="onDone(task)"></i>
+                            </td>
+                            <td class="col-8">
+                                <del v-if="task.done">{{ task.subject }}</del>
+                                <b v-else>{{ task.subject }}</b>
+                            </td>
+                            <td class="col-2">
+                                <i class="fas fa-edit" @click="onEdit(task.id)"></i>
+                                <i class="fas fa-trash-alt" @click="onArchive(task)"></i>
+                            </td>
+                        </template>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                baseCategories: [{
+                        id: -1,
+                        name: 'All'
+                    },
+                    {
+                        id: -2,
+                        name: 'Done'
+                    },
+                    {
+                        id: -3,
+                        name: 'Archive'
+                    },
+                    {
+                        id: -4,
+                        name: 'Today'
+                    }
+                ],
+                categories: [{
+                        id: 1,
+                        name: 'Work'
+                    },
+                    {
+                        id: 2,
+                        name: 'Education'
+                    },
+                    {
+                        id: 3,
+                        name: 'Leisure time'
+                    },
+                    {
+                        id: 4,
+                        name: 'Ideas'
+                    }
+                ],
+                tasks: [{
+                        id: 1,
+                        category: 1,
+                        subject: 'task 1',
+                        comment: 'comment 1',
+                        log: '',
+                        done: false,
+                        archived: false,
+                        today: false,
+                        prio: 0
+                    },
+                    {
+                        id: 2,
+                        category: 2,
+                        subject: 'task 2',
+                        comment: 'comment 2',
+                        log: '',
+                        done: false,
+                        archived: false,
+                        today: true,
+                        prio: 2
+                    },
+                    {
+                        id: 3,
+                        category: 1,
+                        subject: 'task 3 This is a very long descrrriptionnnnnnnnnnnnnnnnnnnnnnnnnnnnn nnnnnnnnnnnnnnnnnnnnnn nnnnnnnnnnnnnnnnnn nnnnnnnnnnnnnnnnnn',
+                        comment: 'comment 3',
+                        log: '',
+                        done: true,
+                        archived: false,
+                        today: false,
+                        prio: 0
+                    }
+                ],
+                currentCategory: -4,
+                showAddForm: false
+            },
+            computed: {
+                extCategories: function() {
+                    return this.baseCategories.concat(this.categories);
+                },
+                filteredTasks: function() {
+                    return this.tasks.filter(
+                        function(element) {
+                            if (this.currentCategory > 0) {
+                                if (element.archived) {
+                                    return false;
+                                }
+                                return (element.category == this.currentCategory);
+                            } else if (this.currentCategory == -1) {
+                                if (element.archived) {
+                                    return false;
+                                }
+                                return true;
+                            } else if (this.currentCategory == -2) {
+                                return element.done;
+                            } else if (this.currentCategory == -3) {
+                                if (element.archived) {
+                                    return true;
+                                }
+                            } else if (this.currentCategory == -4) {
+                                if (element.archived) {
+                                    return false;
+                                }
+                                return element.today;
+                            }
+                        },
+                        this
+                    );
+                }
+            },
+            methods: {
+                onToday: function(task) {
+                    task.today = !task.today;
+                },
+                onDone: function(task) {
+                    task.done = !task.done;
+                },
+                onEdit: function(id) {
+
+                },
+                onArchive: function(task) {
+                    task.archived = !task.archived;
+                },
+                onDelete: function(id) {
+                    var index = this.tasks.findIndex(function(elm) {
+                        return elm.id == id
+                    });
+                    if (confirm('Delete task "' + this.tasks[index].subject + '" ?')) {
+                        this.tasks.splice(index, 1);
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>
