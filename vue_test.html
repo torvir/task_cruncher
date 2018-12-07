@@ -90,7 +90,7 @@
 
 							<td class="col-8 text-danger">
 								<template v-if="task.done">
-									<small><i>{{ formatDate(task.doneDate) }}</i></small>
+									<small><i class="text-success">{{ formatDate(task.doneDate) }}</i></small>
 									<del>{{ task.subject }}</del>
 								</template>
 								<b v-else>{{ task.subject }}</b>
@@ -112,7 +112,7 @@
 							</td>
 							<td class="col-8">
 								<template v-if="task.done">
-									<small><i>{{ formatDate(task.doneDate) }}</i></small>
+									<small><i class="text-success">{{ formatDate(task.doneDate) }}</i></small>
 									<del>{{ task.subject }}</del>
 								</template>
 								<b v-else>{{ task.subject }}</b>
@@ -208,6 +208,7 @@
 						prio: 0,
 						created: new Date(),
 						doneDate: new Date(),
+						archivedDate: new Date(),
 						edit: false
 					},
 					{
@@ -222,6 +223,7 @@
 						prio: 2,
 						created: new Date(),
 						doneDate: new Date(),
+						archivedDate: new Date(),
 						edit: false
 					},
 					{
@@ -236,6 +238,7 @@
 						prio: 0,
 						created: new Date(),
 						doneDate: new Date(),
+						archivedDate: new Date(),
 						edit: false
 					}
 				],
@@ -257,6 +260,10 @@
 					if (this.currentCategory == -2) {
 						this.tasks.sort(function(a, b) {
 							return b.doneDate - a.doneDate
+						});
+					} else if (this.currentCategory == -3) {
+						this.tasks.sort(function(a, b) {
+							return b.archivedDate - a.archivedDate
 						});
 					} else {
 						this.tasks.sort(function(a, b) {
@@ -307,6 +314,9 @@
 				},
 				onArchive: function(task) {
 					task.archived = !task.archived;
+					if (task.archived) {
+						task.archivedDate = new Date();
+					}
 				},
 				onEdit: function(task) {
 					task.edit = !task.edit;
@@ -351,6 +361,7 @@
 						prio: this.addTask.prio,
 						created: new Date(),
 						doneDate: new Date(),
+						archivedDate: new Date(),
 						edit: false
 					});
 					this.addTask.subject = '';
