@@ -37,10 +37,16 @@
 						<label for="inputSubject">Subject</label>
 						<input type="text" class="form-control" id="inputSubject" v-model="addTask.subject" placeholder="Task subject">
 					</div>
-					<div class="form-group col-6">
+					<div class="form-group col-4">
 						<label for="selCategory">Category</label>
 						<select class="form-control" id="selCategory" v-model="addTask.category">
 							<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
+						</select>
+					</div>
+					<div class="form-group col-2">
+						<label for="selPrio">Prio</label>
+						<select class="form-control" id="selPrio" v-model="addTask.prio">
+							<option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
 						</select>
 					</div>
 				</div>
@@ -83,7 +89,10 @@
 							</td>
 
 							<td class="col-8 text-danger">
-								<del v-if="task.done">{{ task.subject }}</del>
+								<template v-if="task.done">
+									<small><i>{{ formatDate(task.doneDate) }}</i></small>
+									<del>{{ task.subject }}</del>
+								</template>
 								<b v-else>{{ task.subject }}</b>
 							</td>
 							<td class="col-1">
@@ -102,7 +111,10 @@
 								<b class="text-muted">{{ task.prio }}</b>
 							</td>
 							<td class="col-8">
-								<del v-if="task.done">{{ task.subject }}</del>
+								<template v-if="task.done">
+									<small><i>{{ formatDate(task.doneDate) }}</i></small>
+									<del>{{ task.subject }}</del>
+								</template>
 								<b v-else>{{ task.subject }}</b>
 							</td>
 							<td class="col-1">
@@ -112,28 +124,28 @@
 						</template>
 						<template v-if="task.edit">
 							<div class="col-6">
-								<label for="inputSubject">Subject</label>
-								<input type="text" class="form-control" id="inputSubject" v-model="task.subject" placeholder="Task subject">
+								<label :for="'inputSubject'+task.id">Subject</label>
+								<input type="text" class="form-control" :id="'inputSubject'+task.id" v-model="task.subject" placeholder="Task subject">
 							</div>
 							<div class="col-4">
-								<label for="selCategory">Category</label>
-								<select class="form-control" id="selCategory" v-model="task.category">
+								<label :for="'selCategory'+task.id">Category</label>
+								<select class="form-control" :id="'selCategory'+task.id" v-model="task.category">
 									<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
 								</select>
 							</div>
 							<div class="col-2">
-								<label for="selPrio">Prio</label>
-								<select class="form-control" id="selPrio" v-model="task.prio">
+								<label :for="'selPrio'+task.id">Prio</label>
+								<select class="form-control" :id="'selPrio'+task.id" v-model="task.prio">
 									<option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
 								</select>
 							</div>
 							<div class="col-6">
-								<label for="inputComment">Comment</label>
-								<textarea rows="4" class="form-control" id="inputComment" v-model="task.comment" placeholder="Comment"></textarea>
+								<label :for="'inputComment'+task.id">Comment</label>
+								<textarea rows="4" class="form-control" :id="'inputComment'+task.id" v-model="task.comment" placeholder="Comment"></textarea>
 							</div>
 							<div class="col-6">
-								<label for="inputLog">Log</label>
-								<textarea rows="4" class="form-control" id="inputLog" v-model="task.log" placeholder="Log"></textarea>
+								<label :for="'inputLog'+task.id">Log</label>
+								<textarea rows="4" class="form-control" :id="'inputLog'+task.id" v-model="task.log" placeholder="Log"></textarea>
 							</div>
 						</template>
 					</tr>
@@ -194,6 +206,8 @@
 						archived: false,
 						today: false,
 						prio: 0,
+						created: new Date(),
+						doneDate: new Date(),
 						edit: false
 					},
 					{
@@ -206,6 +220,8 @@
 						archived: false,
 						today: true,
 						prio: 2,
+						created: new Date(),
+						doneDate: new Date(),
 						edit: false
 					},
 					{
@@ -218,12 +234,15 @@
 						archived: false,
 						today: false,
 						prio: 0,
+						created: new Date(),
+						doneDate: new Date(),
 						edit: false
 					}
 				],
 				addTask: {
 					subject: '',
 					category: 1,
+					prio: 0,
 					comment: '',
 					log: ''
 				},
@@ -235,9 +254,15 @@
 					return this.baseCategories.concat(this.categories);
 				},
 				filteredTasks: function() {
-					this.tasks.sort(function(a, b) {
-						return b.prio - a.prio
-					});
+					if (this.currentCategory == -2) {
+						this.tasks.sort(function(a, b) {
+							return b.doneDate - a.doneDate
+						});
+					} else {
+						this.tasks.sort(function(a, b) {
+							return b.prio - a.prio
+						});
+					}
 					return this.tasks.filter(
 						function(element) {
 							if (this.currentCategory > 0) {
@@ -268,11 +293,17 @@
 				}
 			},
 			methods: {
+				formatDate: function(d) {
+					return d.toDateString().slice(4) + " " + d.toTimeString().slice(0,8);
+				},
 				onToday: function(task) {
 					task.today = !task.today;
 				},
 				onDone: function(task) {
 					task.done = !task.done;
+					if (task.done) {
+						task.doneDate = new Date();
+					}
 				},
 				onArchive: function(task) {
 					task.archived = !task.archived;
@@ -317,7 +348,9 @@
 						done: false,
 						archived: false,
 						today: (this.currentCategory == -4),
-						prio: 0,
+						prio: this.addTask.prio,
+						created: new Date(),
+						doneDate: new Date(),
 						edit: false
 					});
 					this.addTask.subject = '';
