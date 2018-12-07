@@ -336,12 +336,16 @@
                     }
                 },
                 onEdit: function(task) {
-                    task.edit = true;
-                    task.editForm.subject = task.subject;
-                    task.editForm.category = task.category;
-                    task.editForm.prio = task.prio;
-                    task.editForm.comment = task.comment;
-                    task.editForm.log = task.log;
+                    if (task.edit) {
+                        task.edit = false;
+                    } else {
+                        task.edit = true;
+                        task.editForm.subject = task.subject;
+                        task.editForm.category = task.category;
+                        task.editForm.prio = task.prio;
+                        task.editForm.comment = task.comment;
+                        task.editForm.log = task.log;
+                    }
                 },
                 onEditSave: function(task) {
                     task.subject = task.editForm.subject;
@@ -407,6 +411,7 @@
                 }
             }
         });
+
     </script>
 </body>
 
