@@ -13,11 +13,11 @@
 <body>
     <div id="app">
         <div class="container">
-           <div class="row">
-              <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                  <img src="taskcruncherlogo.gif" class="img-fluid float-left" alt="">
-              </div>
-           </div>
+            <div class="row">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                    <img src="taskcruncherlogo.gif" class="img-fluid float-left" alt="">
+                </div>
+            </div>
             <div class="row">
                 <button type="button" class="btn btn-info" v-for="category in baseCategories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
                     {{ category.name }} </button>
@@ -67,8 +67,9 @@
                         <th class="col-1">Today</th>
                         <th class="col-1">Done</th>
                         <th class="col-1">Prio</th>
-                        <th class="col-8">Subject</th>
-                        <th class="col-1">Actions</th>
+                        <th class="col-5">Subject</th>
+                        <th class="col-2">Dates</th>
+                        <th class="col-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,14 +85,20 @@
                                 <b class="text-muted">{{ task.prio }}</b>
                             </td>
 
-                            <td class="col-8 text-danger">
-                                <template v-if="task.done">
-                                    <small><i class="text-success">{{ formatDate(task.doneDate) }}</i></small>
-                                    <del>{{ task.subject }}</del>
-                                </template>
+                            <td class="col-5 text-danger">
+                                <del v-if="task.done">{{ task.subject }}</del>
                                 <b v-else>{{ task.subject }}</b>
                             </td>
-                            <td class="col-1">
+                            <td class=" col-2">
+                                <small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
+                                <template v-if="task.done">
+                                    <br>
+                                    <small><i class="text-success">D: {{ formatDate(task.doneDate) }}</i></small>
+                                </template>
+                                <br>
+                                <small><i class="text-danger">A: {{ formatDate(task.archivedDate) }}</i></small>
+                            </td>
+                            <td class="col-2">
                                 <i class="fas fa-undo" @click="onArchive(task)"></i>
                                 <i class="fas fa-times" @click="onDelete(task.id)"></i>
                             </td>
@@ -106,14 +113,18 @@
                             <td class="col-1">
                                 <b class="text-muted">{{ task.prio }}</b>
                             </td>
-                            <td class="col-8">
-                                <template v-if="task.done">
-                                    <small><i class="text-success">{{ formatDate(task.doneDate) }}</i></small>
-                                    <del>{{ task.subject }}</del>
-                                </template>
+                            <td class="col-5">
+                                <del v-if="task.done">{{ task.subject }}</del>
                                 <b v-else>{{ task.subject }}</b>
                             </td>
-                            <td class="col-1">
+                            <td class="col-2">
+                                <small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
+                                <template v-if="task.done">
+                                    <br>
+                                    <small><i class="text-success">D: {{ formatDate(task.doneDate) }}</i></small>
+                                </template>
+                            </td>
+                            <td class="col-2">
                                 <i class="fas fa-edit" @click="onEdit(task)"></i>
                                 <i class="fas fa-trash-alt" @click="onArchive(task)"></i>
                             </td>
@@ -323,7 +334,7 @@
             },
             methods: {
                 formatDate: function(d) {
-                    return d.toDateString().slice(4) + " " + d.toTimeString().slice(0, 8);
+                    return d.toLocaleDateString() + " " + d.toLocaleTimeString().slice(0, 5);
                 },
                 onToday: function(task) {
                     task.today = !task.today;
@@ -416,7 +427,6 @@
                 }
             }
         });
-
     </script>
 </body>
 
