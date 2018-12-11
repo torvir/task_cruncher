@@ -169,6 +169,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script>
+        function storageAvailable(type) {
+            try {
+                var storage = window[type],
+                    x = '__storage_test__';
+                storage.setItem(x, x);
+                storage.removeItem(x);
+                return true;
+            } catch (e) {
+                return e instanceof DOMException && (
+                        // everything except Firefox
+                        e.code === 22 ||
+                        // Firefox
+                        e.code === 1014 ||
+                        // test name field too, because code might not be present
+                        // everything except Firefox
+                        e.name === 'QuotaExceededError' ||
+                        // Firefox
+                        e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                    // acknowledge QuotaExceededError only if there's something already stored
+                    storage.length !== 0;
+            }
+        }
+
+        if (storageAvailable('localStorage')) {
+            // Yippee! We can use localStorage awesomeness
+            alert("Local storage is available")
+        } else {
+            // Too bad, no localStorage for us
+            alert("Local storage isn't available. Nothing is saved when you close the browser.")
+        }
+
+    </script>
+    <script>
         new Vue({
             el: '#app',
             data: {
@@ -284,6 +317,29 @@
                 },
                 currentCategory: -4,
                 showAddForm: false
+            },
+            mounted() {
+                const tasks = JSON.parse(localStorage.tasks, function(key, value) {
+                    console.log(value);
+                    if (key == "created" || key == "doneDate" || key == "archivedDate") {
+                        console.log("Here");
+                        return new Date(value);
+                    } else {
+                        return value;
+                    }
+                });
+                console.log(tasks);
+                if (tasks) {
+                    this.tasks = tasks;
+                }
+            },
+            watch: {
+                tasks: {
+                    handler: function() {
+                        localStorage.tasks = JSON.stringify(this.tasks);
+                    },
+                    deep: true
+                }
             },
             computed: {
                 extCategories: function() {
@@ -427,6 +483,7 @@
                 }
             }
         });
+
     </script>
 </body>
 
