@@ -2,489 +2,441 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Task Cruncher</title>
-    <!-- development version, includes helpful console warnings -->
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<meta charset="UTF-8">
+	<title>Task Cruncher</title>
+	<!-- development version, includes helpful console warnings -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 </head>
 
 <body>
-    <div id="app">
-        <div class="container">
-            <div class="row">
-                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                    <img src="taskcruncherlogo.png" class="img-fluid float-left" alt="">
-                </div>
-            </div>
-            <div class="row">
-                <button type="button" class="btn btn-info" v-for="category in baseCategories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
-                    {{ category.name }} </button>
-                &nbsp; &nbsp;
-                <button type="button" class="btn btn-secondary" v-for="category in categories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
-                    {{ category.name }} </button>
-            </div>
-            <br>
-            <div class="row">
-                <i class="far fa-plus-square fa-2x" @click="onExpandAddTask"></i>
-            </div>
-            <form v-if="showAddForm" @submit.prevent="onAddTask">
-                <div class="form-row">
-                    <div class="form-group col-6">
-                        <label for="inputSubject">Subject</label>
-                        <input type="text" class="form-control" id="inputSubject" v-model="addTask.subject" placeholder="Task subject">
-                    </div>
-                    <div class="form-group col-4">
-                        <label for="selCategory">Category</label>
-                        <select class="form-control" id="selCategory" v-model="addTask.category">
-                            <option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
-                        </select>
-                    </div>
-                    <div class="form-group col-2">
-                        <label for="selPrio">Prio</label>
-                        <select class="form-control" id="selPrio" v-model="addTask.prio">
-                            <option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-6">
-                        <label for="inputComment">Comment</label>
-                        <textarea rows="4" class="form-control" id="inputComment" v-model="addTask.comment" placeholder="Comment"></textarea>
-                    </div>
-                    <div class="form-group col-6">
-                        <label for="inputLog">Log</label>
-                        <textarea rows="4" class="form-control" id="inputLog" v-model="addTask.log" placeholder="Log"></textarea>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Add Task</button>
-            </form>
-            <br>
-            <table class="table table-hover">
-                <thead>
-                    <tr class="row">
-                        <th class="col-1">Today</th>
-                        <th class="col-1">Done</th>
-                        <th class="col-1">Prio</th>
-                        <th class="col-5">Subject</th>
-                        <th class="col-2">Dates</th>
-                        <th class="col-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row" v-for="task in filteredTasks" :key="task.id">
-                        <template v-if="task.archived">
-                            <td class="col-1">
-                                <i class="text-muted far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}"></i>
-                            </td>
-                            <td class="col-1">
-                                <i class="text-muted far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}"></i>
-                            </td>
-                            <td class="col-1">
-                                <b class="text-muted">{{ task.prio }}</b>
-                            </td>
+	<div id="app">
+		<div class="container">
+			<div class="row">
+				<div class="col-10 col-sm-8 col-md-6 col-lg-4">
+					<img src="taskcruncherlogo.png" class="img-fluid float-left" alt="">
+				</div>
+			</div>
+			<div class="row">
+				<button type="button" class="btn btn-info" v-for="category in baseCategories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
+					{{ category.name }} </button>
+				&nbsp; &nbsp;
+				<button type="button" class="btn btn-secondary" v-for="category in categories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
+					{{ category.name }} </button>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-6">
+					<i class="far fa-plus-square fa-2x btn" @click="onExpandAddTask"></i>
+				</div>
+				<div class="col-3">
+					<button type="button" class="btn btn-primary btn-block" @click="onExport">
+						<i class="fas fa-file-export"></i>
+						<b>Export</b> <i>(Backup)</i>
+					</button>
+				</div>
+				<div class="col-3">
+					<button type="button" class="btn btn-primary btn-block" @click="onImport">
+					<i class="fas fa-file-import"></i>
+					<b>Import</b> <i>(Restore)</i>
+					</button>
+				</div>
+			</div>
+			<form v-if="showAddForm" @submit.prevent="onAddTask">
+				<div class="form-row">
+					<div class="form-group col-6">
+						<label for="inputSubject">Subject</label>
+						<input type="text" class="form-control" id="inputSubject" v-model="addTask.subject" placeholder="Task subject">
+					</div>
+					<div class="form-group col-4">
+						<label for="selCategory">Category</label>
+						<select class="form-control" id="selCategory" v-model="addTask.category">
+							<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
+						</select>
+					</div>
+					<div class="form-group col-2">
+						<label for="selPrio">Prio</label>
+						<select class="form-control" id="selPrio" v-model="addTask.prio">
+							<option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
+						</select>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-6">
+						<label for="inputComment">Comment</label>
+						<textarea rows="4" class="form-control" id="inputComment" v-model="addTask.comment" placeholder="Comment"></textarea>
+					</div>
+					<div class="form-group col-6">
+						<label for="inputLog">Log</label>
+						<textarea rows="4" class="form-control" id="inputLog" v-model="addTask.log" placeholder="Log"></textarea>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary">Add Task</button>
+			</form>
+			<br>
+			<table class="table table-hover">
+				<thead>
+					<tr class="row">
+						<th class="col-1">Today</th>
+						<th class="col-1">Done</th>
+						<th class="col-1">Prio</th>
+						<th class="col-5">Subject</th>
+						<th class="col-2">Dates</th>
+						<th class="col-2">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="row" v-for="task in filteredTasks" :key="task.id">
+						<template v-if="task.archived">
+							<td class="col-1">
+								<i class="text-muted far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}"></i>
+							</td>
+							<td class="col-1">
+								<i class="text-muted far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}"></i>
+							</td>
+							<td class="col-1">
+								<b class="text-muted">{{ task.prio }}</b>
+							</td>
 
-                            <td class="col-5 text-danger">
-                                <del v-if="task.done">{{ task.subject }}</del>
-                                <b v-else>{{ task.subject }}</b>
-                            </td>
-                            <td class=" col-2">
-                                <small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
-                                <template v-if="task.done">
-                                    <br>
-                                    <small><i class="text-success">D: {{ formatDate(task.doneDate) }}</i></small>
-                                </template>
-                                <br>
-                                <small><i class="text-danger">A: {{ formatDate(task.archivedDate) }}</i></small>
-                            </td>
-                            <td class="col-2">
-                                <i class="fas fa-undo" @click="onArchive(task)"></i>
-                                <i class="fas fa-times" @click="onDelete(task.id)"></i>
-                            </td>
-                        </template>
-                        <template v-else>
-                            <td class="col-1">
-                                <i class="far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}" @click="onToday(task)"></i>
-                            </td>
-                            <td class="col-1">
-                                <i class="far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}" @click="onDone(task)"></i>
-                            </td>
-                            <td class="col-1">
-                                <b class="text-muted">{{ task.prio }}</b>
-                            </td>
-                            <td class="col-5">
-                                <del v-if="task.done">{{ task.subject }}</del>
-                                <b v-else>{{ task.subject }}</b>
-                            </td>
-                            <td class="col-2">
-                                <small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
-                                <template v-if="task.done">
-                                    <br>
-                                    <small><i class="text-success">D: {{ formatDate(task.doneDate) }}</i></small>
-                                </template>
-                            </td>
-                            <td class="col-2">
-                                <i class="fas fa-edit" @click="onEdit(task)"></i>
-                                <i class="fas fa-trash-alt" @click="onArchive(task)"></i>
-                            </td>
-                        </template>
-                        <template v-if="task.edit">
-                            <div class="col-6">
-                                <label :for="'inputSubject'+task.id">Subject</label>
-                                <input type="text" class="form-control" :id="'inputSubject'+task.id" v-model="task.editForm.subject" placeholder="Task subject">
-                            </div>
-                            <div class="col-4">
-                                <label :for="'selCategory'+task.id">Category</label>
-                                <select class="form-control" :id="'selCategory'+task.id" v-model="task.editForm.category">
-                                    <option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <label :for="'selPrio'+task.id">Prio</label>
-                                <select class="form-control" :id="'selPrio'+task.id" v-model="task.editForm.prio">
-                                    <option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label :for="'inputComment'+task.id">Comment</label>
-                                <textarea rows="4" class="form-control" :id="'inputComment'+task.id" v-model="task.editForm.comment" placeholder="Comment"></textarea>
-                            </div>
-                            <div class="col-6">
-                                <label :for="'inputLog'+task.id">Log</label>
-                                <textarea rows="4" class="form-control" :id="'inputLog'+task.id" v-model="task.editForm.log" placeholder="Log"></textarea>
-                            </div>
-                            <div class="col-4">
-                                <button type="button" class="btn btn-primary" @click="onEditSave(task)">Save</button>
-                                <button type="button" class="btn btn-secondary" @click="onEditCancel(task)">Cancel</button>
-                            </div>
-                        </template>
-                    </tr>
-                </tbody>
-            </table>
+							<td class="col-5 text-danger">
+								<del v-if="task.done">{{ task.subject }}</del>
+								<b v-else>{{ task.subject }}</b>
+							</td>
+							<td class=" col-2">
+								<small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
+								<template v-if="task.done">
+									<br>
+									<small><i class="text-success">D: {{ formatDate(task.doneDate) }}</i></small>
+								</template>
+								<br>
+								<small><i class="text-danger">A: {{ formatDate(task.archivedDate) }}</i></small>
+							</td>
+							<td class="col-2">
+								<i class="fas fa-undo" @click="onArchive(task)"></i>
+								<i class="fas fa-times" @click="onDelete(task.id)"></i>
+							</td>
+						</template>
+						<template v-else>
+							<td class="col-1">
+								<i class="far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}" @click="onToday(task)"></i>
+							</td>
+							<td class="col-1">
+								<i class="far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}" @click="onDone(task)"></i>
+							</td>
+							<td class="col-1">
+								<b class="text-muted">{{ task.prio }}</b>
+							</td>
+							<td class="col-5">
+								<del v-if="task.done">{{ task.subject }}</del>
+								<b v-else>{{ task.subject }}</b>
+							</td>
+							<td class="col-2">
+								<small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
+								<template v-if="task.done">
+									<br>
+									<small><i class="text-success">D: {{ formatDate(task.doneDate) }}</i></small>
+								</template>
+							</td>
+							<td class="col-2">
+								<i class="fas fa-edit" @click="onEdit(task)"></i>
+								<i class="fas fa-trash-alt" @click="onArchive(task)"></i>
+							</td>
+						</template>
+						<template v-if="task.edit">
+							<div class="col-6">
+								<label :for="'inputSubject'+task.id">Subject</label>
+								<input type="text" class="form-control" :id="'inputSubject'+task.id" v-model="task.editForm.subject" placeholder="Task subject">
+							</div>
+							<div class="col-4">
+								<label :for="'selCategory'+task.id">Category</label>
+								<select class="form-control" :id="'selCategory'+task.id" v-model="task.editForm.category">
+									<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
+								</select>
+							</div>
+							<div class="col-2">
+								<label :for="'selPrio'+task.id">Prio</label>
+								<select class="form-control" :id="'selPrio'+task.id" v-model="task.editForm.prio">
+									<option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
+								</select>
+							</div>
+							<div class="col-6">
+								<label :for="'inputComment'+task.id">Comment</label>
+								<textarea rows="4" class="form-control" :id="'inputComment'+task.id" v-model="task.editForm.comment" placeholder="Comment"></textarea>
+							</div>
+							<div class="col-6">
+								<label :for="'inputLog'+task.id">Log</label>
+								<textarea rows="4" class="form-control" :id="'inputLog'+task.id" v-model="task.editForm.log" placeholder="Log"></textarea>
+							</div>
+							<div class="col-4">
+								<button type="button" class="btn btn-primary" @click="onEditSave(task)">Save</button>
+								<button type="button" class="btn btn-secondary" @click="onEditCancel(task)">Cancel</button>
+							</div>
+						</template>
+					</tr>
+				</tbody>
+			</table>
 
-        </div>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script>
-        function storageAvailable(type) {
-            try {
-                var storage = window[type],
-                    x = '__storage_test__';
-                storage.setItem(x, x);
-                storage.removeItem(x);
-                return true;
-            } catch (e) {
-                return e instanceof DOMException && (
-                        // everything except Firefox
-                        e.code === 22 ||
-                        // Firefox
-                        e.code === 1014 ||
-                        // test name field too, because code might not be present
-                        // everything except Firefox
-                        e.name === 'QuotaExceededError' ||
-                        // Firefox
-                        e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-                    // acknowledge QuotaExceededError only if there's something already stored
-                    storage.length !== 0;
-            }
-        }
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script>
+		function storageAvailable(type) {
+			try {
+				var storage = window[type],
+					x = '__storage_test__';
+				storage.setItem(x, x);
+				storage.removeItem(x);
+				return true;
+			} catch (e) {
+				return e instanceof DOMException && (
+						// everything except Firefox
+						e.code === 22 ||
+						// Firefox
+						e.code === 1014 ||
+						// test name field too, because code might not be present
+						// everything except Firefox
+						e.name === 'QuotaExceededError' ||
+						// Firefox
+						e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+					// acknowledge QuotaExceededError only if there's something already stored
+					storage.length !== 0;
+			}
+		}
 
-        if (storageAvailable('localStorage')) {
-            // Yippee! We can use localStorage awesomeness
-            alert("Local storage is available")
-        } else {
-            // Too bad, no localStorage for us
-            alert("Local storage isn't available. Nothing is saved when you close the browser.")
-        }
+		if (storageAvailable('localStorage')) {
+			// Yippee! We can use localStorage awesomeness
+			alert("Local storage is available")
+		} else {
+			// Too bad, no localStorage for us
+			alert("Local storage isn't available. Nothing is saved when you close the browser.")
+		}
 
-    </script>
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                baseCategories: [{
-                        id: -1,
-                        name: 'All'
-                    },
-                    {
-                        id: -2,
-                        name: 'Done'
-                    },
-                    {
-                        id: -3,
-                        name: 'Archive'
-                    },
-                    {
-                        id: -4,
-                        name: 'Today'
-                    }
-                ],
-                categories: [{
-                        id: 1,
-                        name: 'Work'
-                    },
-                    {
-                        id: 2,
-                        name: 'Education'
-                    },
-                    {
-                        id: 3,
-                        name: 'Leisure time'
-                    },
-                    {
-                        id: 4,
-                        name: 'Ideas'
-                    }
-                ],
-                tasks: [{
-                        id: 1,
-                        category: 1,
-                        subject: 'task 1',
-                        comment: 'comment 1',
-                        log: '',
-                        done: false,
-                        archived: false,
-                        today: false,
-                        prio: 0,
-                        created: new Date(),
-                        doneDate: new Date(),
-                        archivedDate: new Date(),
-                        edit: false,
-                        editForm: {
-                            category: 1,
-                            prio: 0,
-                            subject: '',
-                            comment: '',
-                            log: ''
-                        }
-                    },
-                    {
-                        id: 2,
-                        category: 2,
-                        subject: 'task 2',
-                        comment: 'comment 2',
-                        log: '',
-                        done: false,
-                        archived: false,
-                        today: true,
-                        prio: 2,
-                        created: new Date(),
-                        doneDate: new Date(),
-                        archivedDate: new Date(),
-                        edit: false,
-                        editForm: {
-                            category: 1,
-                            prio: 0,
-                            subject: '',
-                            comment: '',
-                            log: ''
-                        }
+	</script>
+	<script>
+		new Vue({
+			el: '#app',
+			data: {
+				baseCategories: [{
+						id: -1,
+						name: 'All'
+					},
+					{
+						id: -2,
+						name: 'Done'
+					},
+					{
+						id: -3,
+						name: 'Archive'
+					},
+					{
+						id: -4,
+						name: 'Today'
+					}
+				],
+				categories: [{
+						id: 1,
+						name: 'Work'
+					},
+					{
+						id: 2,
+						name: 'Education'
+					},
+					{
+						id: 3,
+						name: 'Leisure time'
+					},
+					{
+						id: 4,
+						name: 'Ideas'
+					}
+				],
+				tasks: [],
+				addTask: {
+					subject: '',
+					category: 1,
+					prio: 0,
+					comment: '',
+					log: ''
+				},
+				currentCategory: -4,
+				showAddForm: false
+			},
+			mounted() {
+				const tasks = JSON.parse(localStorage.tasks, function(key, value) {
+					console.log(value);
+					if (key == "created" || key == "doneDate" || key == "archivedDate") {
+						console.log("Here");
+						return new Date(value);
+					} else {
+						return value;
+					}
+				});
+				console.log(tasks);
+				if (tasks) {
+					this.tasks = tasks;
+				}
+			},
+			watch: {
+				tasks: {
+					handler: function() {
+						localStorage.tasks = JSON.stringify(this.tasks);
+					},
+					deep: true
+				}
+			},
+			computed: {
+				extCategories: function() {
+					return this.baseCategories.concat(this.categories);
+				},
+				filteredTasks: function() {
+					if (this.currentCategory == -2) {
+						this.tasks.sort(function(a, b) {
+							return b.doneDate - a.doneDate
+						});
+					} else if (this.currentCategory == -3) {
+						this.tasks.sort(function(a, b) {
+							return b.archivedDate - a.archivedDate
+						});
+					} else {
+						this.tasks.sort(function(a, b) {
+							return b.prio - a.prio
+						});
+					}
+					return this.tasks.filter(
+						function(element) {
+							if (this.currentCategory > 0) {
+								if (element.archived) {
+									return false;
+								}
+								return (element.category == this.currentCategory);
+							} else if (this.currentCategory == -1) {
+								if (element.archived) {
+									return false;
+								}
+								return true;
+							} else if (this.currentCategory == -2) {
+								return element.done;
+							} else if (this.currentCategory == -3) {
+								if (element.archived) {
+									return true;
+								}
+							} else if (this.currentCategory == -4) {
+								if (element.archived) {
+									return false;
+								}
+								return element.today;
+							}
+						},
+						this
+					);
+				}
+			},
+			methods: {
+				formatDate: function(d) {
+					return d.toLocaleDateString() + " " + d.toLocaleTimeString().slice(0, 5);
+				},
+				onToday: function(task) {
+					task.today = !task.today;
+				},
+				onDone: function(task) {
+					task.done = !task.done;
+					if (task.done) {
+						task.doneDate = new Date();
+					}
+				},
+				onArchive: function(task) {
+					task.archived = !task.archived;
+					if (task.archived) {
+						task.archivedDate = new Date();
+					}
+				},
+				onEdit: function(task) {
+					if (task.edit) {
+						task.edit = false;
+					} else {
+						task.edit = true;
+						task.editForm.subject = task.subject;
+						task.editForm.category = task.category;
+						task.editForm.prio = task.prio;
+						task.editForm.comment = task.comment;
+						task.editForm.log = task.log;
+					}
+				},
+				onEditSave: function(task) {
+					task.subject = task.editForm.subject;
+					task.category = task.editForm.category;
+					task.prio = task.editForm.prio;
+					task.comment = task.editForm.comment;
+					task.log = task.editForm.log;
+					task.edit = false;
+				},
+				onEditCancel: function(task) {
+					task.edit = false;
+				},
+				onDelete: function(id) {
+					var index = this.tasks.findIndex(function(elm) {
+						return elm.id == id
+					});
+					if (confirm('Delete task "' + this.tasks[index].subject + '" ?')) {
+						this.tasks.splice(index, 1);
+					}
+				},
+				onExpandAddTask: function() {
+					this.showAddForm = !this.showAddForm;
+					if (this.currentCategory > 0) {
+						this.addTask.category = this.currentCategory;
+					}
+				},
+				onExport: function() {
 
-                    },
-                    {
-                        id: 3,
-                        category: 1,
-                        subject: 'task 3 This is a very long descrrriptionnnnnnnnnnnnnnnnnnnnnnnnnnnnn nnnnnnnnnnnnnnnnnnnnnn nnnnnnnnnnnnnnnnnn nnnnnnnnnnnnnnnnnn',
-                        comment: 'comment 3',
-                        log: '',
-                        done: true,
-                        archived: false,
-                        today: false,
-                        prio: 0,
-                        created: new Date(),
-                        doneDate: new Date(),
-                        archivedDate: new Date(),
-                        edit: false,
-                        editForm: {
-                            category: 1,
-                            prio: 0,
-                            subject: '',
-                            comment: '',
-                            log: ''
-                        }
+				},
+				onImport: function() {
 
-                    }
-                ],
-                addTask: {
-                    subject: '',
-                    category: 1,
-                    prio: 0,
-                    comment: '',
-                    log: ''
-                },
-                currentCategory: -4,
-                showAddForm: false
-            },
-            mounted() {
-                const tasks = JSON.parse(localStorage.tasks, function(key, value) {
-                    console.log(value);
-                    if (key == "created" || key == "doneDate" || key == "archivedDate") {
-                        console.log("Here");
-                        return new Date(value);
-                    } else {
-                        return value;
-                    }
-                });
-                console.log(tasks);
-                if (tasks) {
-                    this.tasks = tasks;
-                }
-            },
-            watch: {
-                tasks: {
-                    handler: function() {
-                        localStorage.tasks = JSON.stringify(this.tasks);
-                    },
-                    deep: true
-                }
-            },
-            computed: {
-                extCategories: function() {
-                    return this.baseCategories.concat(this.categories);
-                },
-                filteredTasks: function() {
-                    if (this.currentCategory == -2) {
-                        this.tasks.sort(function(a, b) {
-                            return b.doneDate - a.doneDate
-                        });
-                    } else if (this.currentCategory == -3) {
-                        this.tasks.sort(function(a, b) {
-                            return b.archivedDate - a.archivedDate
-                        });
-                    } else {
-                        this.tasks.sort(function(a, b) {
-                            return b.prio - a.prio
-                        });
-                    }
-                    return this.tasks.filter(
-                        function(element) {
-                            if (this.currentCategory > 0) {
-                                if (element.archived) {
-                                    return false;
-                                }
-                                return (element.category == this.currentCategory);
-                            } else if (this.currentCategory == -1) {
-                                if (element.archived) {
-                                    return false;
-                                }
-                                return true;
-                            } else if (this.currentCategory == -2) {
-                                return element.done;
-                            } else if (this.currentCategory == -3) {
-                                if (element.archived) {
-                                    return true;
-                                }
-                            } else if (this.currentCategory == -4) {
-                                if (element.archived) {
-                                    return false;
-                                }
-                                return element.today;
-                            }
-                        },
-                        this
-                    );
-                }
-            },
-            methods: {
-                formatDate: function(d) {
-                    return d.toLocaleDateString() + " " + d.toLocaleTimeString().slice(0, 5);
-                },
-                onToday: function(task) {
-                    task.today = !task.today;
-                },
-                onDone: function(task) {
-                    task.done = !task.done;
-                    if (task.done) {
-                        task.doneDate = new Date();
-                    }
-                },
-                onArchive: function(task) {
-                    task.archived = !task.archived;
-                    if (task.archived) {
-                        task.archivedDate = new Date();
-                    }
-                },
-                onEdit: function(task) {
-                    if (task.edit) {
-                        task.edit = false;
-                    } else {
-                        task.edit = true;
-                        task.editForm.subject = task.subject;
-                        task.editForm.category = task.category;
-                        task.editForm.prio = task.prio;
-                        task.editForm.comment = task.comment;
-                        task.editForm.log = task.log;
-                    }
-                },
-                onEditSave: function(task) {
-                    task.subject = task.editForm.subject;
-                    task.category = task.editForm.category;
-                    task.prio = task.editForm.prio;
-                    task.comment = task.editForm.comment;
-                    task.log = task.editForm.log;
-                    task.edit = false;
-                },
-                onEditCancel: function(task) {
-                    task.edit = false;
-                },
-                onDelete: function(id) {
-                    var index = this.tasks.findIndex(function(elm) {
-                        return elm.id == id
-                    });
-                    if (confirm('Delete task "' + this.tasks[index].subject + '" ?')) {
-                        this.tasks.splice(index, 1);
-                    }
-                },
-                onExpandAddTask: function() {
-                    this.showAddForm = !this.showAddForm;
-                    if (this.currentCategory > 0) {
-                        this.addTask.category = this.currentCategory;
-                    }
-                },
-                onAddTask: function() {
-                    var id = Math.max.apply(Math, this.tasks.map(function(o) {
-                        return o.id;
-                    }))
-                    if (id < 0) {
-                        id = 0;
-                    }
-                    id = id + 1;
-                    this.tasks.push({
-                        id: id,
-                        category: this.addTask.category,
-                        subject: this.addTask.subject,
-                        comment: this.addTask.comment,
-                        log: this.addTask.log,
-                        done: false,
-                        archived: false,
-                        today: (this.currentCategory == -4),
-                        prio: this.addTask.prio,
-                        created: new Date(),
-                        doneDate: new Date(),
-                        archivedDate: new Date(),
-                        edit: false,
-                        editForm: {
-                            category: 1,
-                            prio: 0,
-                            subject: '',
-                            comment: '',
-                            log: ''
-                        }
+				},
+				onAddTask: function() {
+					var id = Math.max.apply(Math, this.tasks.map(function(o) {
+						return o.id;
+					}))
+					if (id < 0) {
+						id = 0;
+					}
+					id = id + 1;
+					this.tasks.push({
+						id: id,
+						category: this.addTask.category,
+						subject: this.addTask.subject,
+						comment: this.addTask.comment,
+						log: this.addTask.log,
+						done: false,
+						archived: false,
+						today: (this.currentCategory == -4),
+						prio: this.addTask.prio,
+						created: new Date(),
+						doneDate: new Date(),
+						archivedDate: new Date(),
+						edit: false,
+						editForm: {
+							category: 1,
+							prio: 0,
+							subject: '',
+							comment: '',
+							log: ''
+						}
 
-                    });
-                    this.addTask.subject = '';
-                    this.addTask.category = 1;
-                    this.addTask.comment = '';
-                    this.addTask.log = '';
-                    this.showAddForm = false;
-                }
-            }
-        });
+					});
+					this.addTask.subject = '';
+					this.addTask.category = 1;
+					this.addTask.comment = '';
+					this.addTask.log = '';
+					this.showAddForm = false;
+				}
+			}
+		});
 
-    </script>
+	</script>
 </body>
 
 </html>
