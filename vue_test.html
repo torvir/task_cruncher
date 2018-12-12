@@ -133,8 +133,8 @@
 								<b class="text-muted">{{ task.prio }}</b>
 							</td>
 							<td class="col-5">
-								<del v-if="task.done">{{ task.subject }}</del>
-								<b v-else>{{ task.subject }}</b>
+								<del v-if="task.done" @click="onEdit(task)">{{ task.subject }}</del>
+								<b v-else @click="onEdit(task)">{{ task.subject }}</b>
 							</td>
 							<td class="col-2">
 								<small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
