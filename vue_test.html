@@ -13,11 +13,12 @@
 <body>
     <div id="app">
         <div class="container">
-            <div class="row">
+            <div class="row bg-info">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                     <img src="taskcruncherlogo.png" class="img-fluid float-left" alt="">
                 </div>
             </div>
+            <div class="row" style="height:2px"></div>
             <div class="row">
                 <button type="button" class="btn btn-info" v-for="category in baseCategories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
                     {{ category.name }} </button>
