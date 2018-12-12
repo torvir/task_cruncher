@@ -118,8 +118,8 @@
 								<small><i class="text-danger">A: {{ formatDate(task.archivedDate) }}</i></small>
 							</td>
 							<td class="col-2">
-								<i class="fas fa-undo" @click="onArchive(task)"></i>
-								<i class="fas fa-times" @click="onDelete(task.id)"></i>
+								<i class="fas fa-undo" @click="onArchive(task)" data-toggle="tooltip" data-placement="left" title="Undo Archive"></i>
+								<i class="fas fa-times" @click="onDelete(task.id)" data-toggle="tooltip" data-placement="right" title="Delete Task"></i>
 							</td>
 						</template>
 						<template v-else>
@@ -144,8 +144,8 @@
 								</template>
 							</td>
 							<td class="col-2">
-								<i class="fas fa-edit" @click="onEdit(task)"></i>
-								<i class="fas fa-trash-alt" @click="onArchive(task)"></i>
+								<i class="fas fa-edit" @click="onEdit(task)" data-toggle="tooltip" data-placement="left" title="Edit Task"></i>
+								<i class="fas fa-trash-alt" @click="onArchive(task)" data-toggle="tooltip" data-placement="right" title="Archive Task"></i>
 							</td>
 						</template>
 						<template v-if="task.edit">
