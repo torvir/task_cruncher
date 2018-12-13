@@ -289,15 +289,21 @@
 				filteredTasks: function() {
 					if (this.currentCategory == -2) {
 						this.tasks.sort(function(a, b) {
-							return b.doneDate - a.doneDate
+							return b.doneDate - a.doneDate;
 						});
 					} else if (this.currentCategory == -3) {
 						this.tasks.sort(function(a, b) {
-							return b.archivedDate - a.archivedDate
+							return b.archivedDate - a.archivedDate;
 						});
 					} else {
+						// Sort on 1: Priority and 2: Created Date
+						// First sort on Created Date
 						this.tasks.sort(function(a, b) {
-							return b.prio - a.prio
+							return b.created - a.created;
+						});
+						// Then sort on Priority
+						this.tasks.sort(function(a, b) {
+							return b.prio - a.prio;
 						});
 					}
 					return this.tasks.filter(
