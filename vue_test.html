@@ -105,8 +105,8 @@
 							</td>
 
 							<td class="col-5 text-danger">
-								<del v-if="task.done">{{ task.subject }}</del>
-								<b v-else>{{ task.subject }}</b>
+								<del v-if="task.done" @click="onEdit(task)">{{ task.subject }}</del>
+								<b v-else @click="onEdit(task)">{{ task.subject }}</b>
 							</td>
 							<td class=" col-2">
 								<small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
@@ -127,7 +127,8 @@
 								<i class="far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}" @click="onToday(task)"></i>
 							</td>
 							<td class="col-1">
-								<i class="far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}" @click="onDone(task)"></i>
+								<i v-if="task.category==2" class="text-muted far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}"></i>
+								<i v-else class="far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}" @click="onDone(task)"></i>
 							</td>
 							<td class="col-1">
 								<b class="text-muted">{{ task.prio }}</b>
@@ -151,30 +152,30 @@
 						<template v-if="task.edit">
 							<div class="col-6">
 								<label :for="'inputSubject'+task.id">Subject</label>
-								<input type="text" class="form-control" :id="'inputSubject'+task.id" v-model="task.editForm.subject" placeholder="Task subject">
+								<input type="text" class="form-control" :id="'inputSubject'+task.id" v-model="task.editForm.subject" :disabled="task.archived">
 							</div>
 							<div class="col-4">
 								<label :for="'selCategory'+task.id">Category</label>
-								<select class="form-control" :id="'selCategory'+task.id" v-model="task.editForm.category">
+								<select class="form-control" :id="'selCategory'+task.id" v-model="task.editForm.category" :disabled="task.archived">
 									<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
 								</select>
 							</div>
 							<div class="col-2">
 								<label :for="'selPrio'+task.id">Prio</label>
-								<select class="form-control" :id="'selPrio'+task.id" v-model="task.editForm.prio">
+								<select class="form-control" :id="'selPrio'+task.id" v-model="task.editForm.prio" :disabled="task.archived">
 									<option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
 								</select>
 							</div>
 							<div class="col-6">
 								<label :for="'inputComment'+task.id">Comment</label>
-								<textarea rows="4" class="form-control" :id="'inputComment'+task.id" v-model="task.editForm.comment" placeholder="Comment"></textarea>
+								<textarea rows="4" class="form-control" :id="'inputComment'+task.id" v-model="task.editForm.comment" :disabled="task.archived"></textarea>
 							</div>
 							<div class="col-6">
 								<label :for="'inputLog'+task.id">Log</label>
-								<textarea rows="4" class="form-control" :id="'inputLog'+task.id" v-model="task.editForm.log" placeholder="Log"></textarea>
+								<textarea rows="4" class="form-control" :id="'inputLog'+task.id" v-model="task.editForm.log" :disabled="task.archived"></textarea>
 							</div>
 							<div class="col-4">
-								<button type="button" class="btn btn-primary" @click="onEditSave(task)">Save</button>
+								<button type="button" class="btn btn-primary" @click="onEditSave(task)" v-if="!task.archived">Save</button>
 								<button type="button" class="btn btn-secondary" @click="onEditCancel(task)">Cancel</button>
 							</div>
 						</template>
