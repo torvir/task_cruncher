@@ -140,6 +140,7 @@
 							</td>
 							<td class="col-5">
 								<del v-if="task.done" @click="onEdit(task)">{{ task.subject }}</del>
+								<b v-else-if="task.category==2" @click="onEdit(task)" class="text-primary">{{ task.subject }}</b>
 								<b v-else @click="onEdit(task)">{{ task.subject }}</b>
 							</td>
 							<td class="col-2">
