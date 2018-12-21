@@ -32,7 +32,55 @@
 				&nbsp; &nbsp;
 				<button type="button" class="btn btn-secondary" v-for="category in categories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
 					{{ category.name }} </button>
-			</div>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#catSettingsModal">
+                    <small>
+                        <i class="fas fa-cog"></i>
+                        Categories
+                    </small>
+                </button>
+            </div>
+            <div class="modal fade" id="catSettingsModal" tabindex="-1" role="dialog" aria-labelledby="catSettingsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Edit Categories</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr class="row">
+                                        <th class="col-8">Category</th>
+                                        <th class="col-2">Recurring</th>
+                                        <th class="col-2">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="row" v-for="category in categories" :key="category.id">
+                                            <td class="col-8">
+                                                <input type="text" class="form-control" id="inputSubject" v-model="category.name">
+                                            </td>
+                                            <td class="col-2">
+                                                <i class="far" :class="{'fa-square': !category.recurring, 'fa-check-square': category.recurring}" @click="category.recurring = !category.recurring"></i>
+                                        </td>
+                                            <td class="col-2">
+                                                <i class="fas fa-times"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 			<br>
 			<div class="row">
 				<div class="col-2 col-sm-4 col-lg-6">
