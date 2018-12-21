@@ -120,9 +120,18 @@
 						<div class="modal-body">
 							<form @submit.prevent="onAddTask">
 								<div class="form-row">
-									<div class="form-group col-6">
+									<div class="form-group col-12">
 										<label for="inputSubject">Subject</label>
 										<input type="text" class="form-control" id="inputSubject" v-model="addTask.subject">
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-6">
+										<input type="checkbox" id="inputRecurring" v-model="addTask.recurring">
+										Recurring
+										<small class="form-text text-muted">
+											Recurring tasks can't be marked as "done". Just add the task to, or remove from Today's list.
+										</small>
 									</div>
 									<div class="form-group col-4">
 										<label for="selCategory">Category</label>
@@ -190,6 +199,10 @@
 								<b v-else @click="onEdit(task)">{{ task.subject }}</b>
 							</td>
 							<td class=" col-2">
+								<template v-if="task.recurring">
+									<small><i class="text-primary">Recurring</i></small>
+									<br>
+								</template>
 								<small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
 								<template v-if="task.done">
 									<br>
@@ -208,7 +221,7 @@
 								<i class="far" :class="{'fa-calendar': !task.today, 'fa-calendar-check': task.today}" @click="onToday(task)"></i>
 							</td>
 							<td class="col-1">
-								<i v-if="task.category==2" class="text-muted far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}"></i>
+								<i v-if="task.recurring" class="text-muted far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}"></i>
 								<i v-else class="far" :class="{'fa-circle': !task.done, 'fa-check-circle': task.done}" @click="onDone(task)"></i>
 							</td>
 							<td class="col-1">
@@ -216,10 +229,14 @@
 							</td>
 							<td class="col-5">
 								<del v-if="task.done" @click="onEdit(task)">{{ task.subject }}</del>
-								<b v-else-if="task.category==2" @click="onEdit(task)" class="text-primary">{{ task.subject }}</b>
+								<b v-else-if="task.recurring" @click="onEdit(task)" class="text-primary">{{ task.subject }}</b>
 								<b v-else @click="onEdit(task)">{{ task.subject }}</b>
 							</td>
 							<td class="col-2">
+								<template v-if="task.recurring">
+									<small><i class="text-primary">Recurring</i></small>
+									<br>
+								</template>
 								<small><i class="text-secondary">C: {{ formatDate(task.created) }}</i></small>
 								<template v-if="task.done">
 									<br>
@@ -232,9 +249,16 @@
 							</td>
 						</template>
 						<template v-if="task.edit">
-							<div class="col-6">
+							<div class="col-12">
 								<label :for="'inputSubject'+task.id">Subject</label>
 								<input type="text" class="form-control" :id="'inputSubject'+task.id" v-model="task.editForm.subject" :disabled="task.archived">
+							</div>
+							<div class="col-6">
+								<input type="checkbox" id="inputRecurring" v-model="task.editForm.recurring">
+								Recurring
+								<small class="form-text text-muted">
+									Recurring tasks can't be marked as "done". Just add the task to, or remove from Today's list.
+								</small>
 							</div>
 							<div class="col-4">
 								<label :for="'selCategory'+task.id">Category</label>
@@ -357,6 +381,7 @@
 				tasks: [],
 				addTask: {
 					subject: '',
+					recurring: false,
 					category: 1,
 					prio: 0,
 					comment: '',
@@ -485,6 +510,7 @@
 					} else {
 						task.edit = true;
 						task.editForm.subject = task.subject;
+						task.editForm.recurring = task.recurring;
 						task.editForm.category = task.category;
 						task.editForm.prio = task.prio;
 						task.editForm.comment = task.comment;
@@ -493,6 +519,7 @@
 				},
 				onEditSave: function (task) {
 					task.subject = task.editForm.subject;
+					task.recurring = task.editForm.recurring;
 					task.category = task.editForm.category;
 					task.prio = task.editForm.prio;
 					task.comment = task.editForm.comment;
@@ -591,6 +618,7 @@
 						id: id,
 						category: this.addTask.category,
 						subject: this.addTask.subject,
+						recurring: this.addTask.recurring,
 						comment: this.addTask.comment,
 						log: this.addTask.log,
 						done: false,
@@ -611,9 +639,11 @@
 
 					});
 					this.addTask.subject = '';
+					this.addTask.recurring = false;
 					this.addTask.category = 1;
 					this.addTask.comment = '';
 					this.addTask.log = '';
+					this.addTask.prio = 0;
 					this.showAddForm = false;
 				}
 			}
