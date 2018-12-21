@@ -58,8 +58,7 @@
 							<table class="table table-hover">
 								<thead>
 									<tr class="row">
-										<th class="col-8">Category</th>
-										<th class="col-2">Recurring</th>
+										<th class="col-10">Category</th>
 										<th class="col-2">Delete</th>
 									</tr>
 								</thead>
@@ -68,11 +67,9 @@
 										<td class="col-8">
 											<input type="text" class="form-control" id="inputSubject" v-model="category.name">
 										</td>
-										<td class="col-2">
-											<i class="far" :class="{'fa-square': !category.recurring, 'fa-check-square': category.recurring}" @click="category.recurring = !category.recurring"></i>
 										</td>
 										<td class="col-2">
-											<i class="fas fa-times"></i>
+											<i class="fas fa-times" :class="{'text-muted': usedCategory(category.id)}" @click="onDelCategory(category.id)"></i>
 										</td>
 									</tr>
 								</tbody>
@@ -352,7 +349,7 @@
 				if (tasks) {
 					this.tasks = tasks;
 				}
-				
+
 				const categories = JSON.parse(localStorage.categories);
 				if (categories) {
 					this.categories = categories;
@@ -494,7 +491,8 @@
 					}
 				},
 				onExport: function () {
-					this.download("backupTaskCruncher.txt", JSON.stringify(this.tasks));
+					const backupStr = { categories: this.categories, tasks: this.tasks }
+					this.download("backupTaskCruncher.txt", JSON.stringify(backupStr));
 				},
 				onImport: function () {
 					// Redirect to File dialog
@@ -506,21 +504,38 @@
 					if (file.type.match(/plain/)) {
 						var reader = new FileReader();
 						reader.onload = function () {
-							const tasks = JSON.parse(reader.result, function (key, value) {
+							const backupStr = JSON.parse(reader.result, function (key, value) {
 								if (key == "created" || key == "doneDate" || key == "archivedDate") {
 									return new Date(value);
 								} else {
 									return value;
 								}
 							});
-							if (tasks) {
+							if (backupStr) {
 								self.tasks.splice(0);
-								for (n = 0; n < tasks.length; n++) {
-									self.tasks.push(tasks[n]);
+								for (n = 0; n < backupStr.tasks.length; n++) {
+									self.tasks.push(backupStr.tasks[n]);
+								}
+								self.categories.splice(0);
+								for (n = 0; n < backupStr.categories.length; n++) {
+									self.categories.push(backupStr.categories[n]);
 								}
 							}
 						};
 						reader.readAsText(file);
+					}
+				},
+				usedCategory: function (categoryId) {
+					return this.tasks.find(function(t) { return (t.category == categoryId); });
+				},
+				onDelCategory: function (categoryId) {
+					if (!this.usedCategory(categoryId)) {
+						var index = this.categories.findIndex(function (elm) {
+							return elm.id == categoryId;
+						});
+						if (confirm('Delete category "' + this.categories[index].name + '" ?')) {
+							this.categories.splice(index, 1);
+						}
 					}
 				},
 				onAddTask: function () {
