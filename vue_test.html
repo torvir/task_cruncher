@@ -88,8 +88,10 @@
 			<br>
 			<div class="row">
 				<div class="col-2 col-sm-4 col-lg-6">
-					<i class="far fa-plus-square fa-2x btn" @click="onExpandAddTask"></i>
-					<b @click="onExpandAddTask">Add Task</b>
+					<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addTaskModal">
+						<i class="fas fa-plus-square"></i>
+						Add Task
+					</button>
 				</div>
 				<div class="col-5 col-sm-4 col-lg-3">
 					<button type="button" class="btn btn-primary btn-block" @click="onExport">
@@ -105,37 +107,59 @@
 					<input type="file" hidden id="importFile" @change="onChangeImpFile" />
 				</div>
 			</div>
-			<form v-if="showAddForm" @submit.prevent="onAddTask">
-				<div class="form-row">
-					<div class="form-group col-6">
-						<label for="inputSubject">Subject</label>
-						<input type="text" class="form-control" id="inputSubject" v-model="addTask.subject">
-					</div>
-					<div class="form-group col-4">
-						<label for="selCategory">Category</label>
-						<select class="form-control" id="selCategory" v-model="addTask.category">
-							<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
-						</select>
-					</div>
-					<div class="form-group col-2">
-						<label for="selPrio">Prio</label>
-						<select class="form-control" id="selPrio" v-model="addTask.prio">
-							<option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
-						</select>
+			<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel"
+			 aria-hidden="true">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Add Task</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form @submit.prevent="onAddTask">
+								<div class="form-row">
+									<div class="form-group col-6">
+										<label for="inputSubject">Subject</label>
+										<input type="text" class="form-control" id="inputSubject" v-model="addTask.subject">
+									</div>
+									<div class="form-group col-4">
+										<label for="selCategory">Category</label>
+										<select class="form-control" id="selCategory" v-model="addTask.category">
+											<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
+										</select>
+									</div>
+									<div class="form-group col-2">
+										<label for="selPrio">Prio</label>
+										<select class="form-control" id="selPrio" v-model="addTask.prio">
+											<option v-for="n in 5" :value="n - 1"> {{ n - 1 }} </option>
+										</select>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-6">
+										<label for="inputComment">Comment</label>
+										<textarea rows="4" class="form-control" id="inputComment" v-model="addTask.comment"></textarea>
+									</div>
+									<div class="form-group col-6">
+										<label for="inputLog">Log</label>
+										<textarea rows="4" class="form-control" id="inputLog" v-model="addTask.log"></textarea>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="form-group col-10">
+										<button type="submit" class="btn btn-primary">Add Task</button>
+									</div>
+									<div class="form-group col-2 text-right">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
-				<div class="form-row">
-					<div class="form-group col-6">
-						<label for="inputComment">Comment</label>
-						<textarea rows="4" class="form-control" id="inputComment" v-model="addTask.comment"></textarea>
-					</div>
-					<div class="form-group col-6">
-						<label for="inputLog">Log</label>
-						<textarea rows="4" class="form-control" id="inputLog" v-model="addTask.log"></textarea>
-					</div>
-				</div>
-				<button type="submit" class="btn btn-primary">Add Task</button>
-			</form>
+			</div>
 			<br>
 			<table class="table table-hover">
 				<thead>
@@ -275,10 +299,9 @@
 
 		// Check for localStorage support
 		if (storageAvailable('localStorage')) {
-			// Yippee! We can use localStorage awesomeness
-			// alert("Local storage is available")
+			// We can use localStorage
 		} else {
-			// Too bad, no localStorage for us
+			// localStorage is not available in this browser
 			alert("Local storage isn't available. Nothing is saved when you close the browser.")
 		}
 
@@ -339,8 +362,7 @@
 					comment: '',
 					log: ''
 				},
-				currentCategory: -4,
-				showAddForm: false
+				currentCategory: -4
 			},
 			mounted() {
 				const tasks = JSON.parse(localStorage.tasks, function (key, value) {
@@ -488,12 +510,6 @@
 						this.tasks.splice(index, 1);
 					}
 				},
-				onExpandAddTask: function () {
-					this.showAddForm = !this.showAddForm;
-					if (this.currentCategory > 0) {
-						this.addTask.category = this.currentCategory;
-					}
-				},
 				onExport: function () {
 					const backupStr = {
 						categories: this.categories,
@@ -557,7 +573,10 @@
 							id = 0;
 						}
 						id = id + 1;
-						this.categories.push({id: id, name: name});
+						this.categories.push({
+							id: id,
+							name: name
+						});
 					}
 				},
 				onAddTask: function () {
