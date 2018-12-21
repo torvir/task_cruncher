@@ -56,6 +56,10 @@
 						</div>
 						<div class="modal-body">
 							<table class="table table-hover">
+								<div class="row">
+									<i class="far fa-plus-square btn" @click="onAddCategory"></i>
+									<b @click="onAddCategory">Add Category</b>
+								</div>
 								<thead>
 									<tr class="row">
 										<th class="col-10">Category</th>
@@ -64,7 +68,7 @@
 								</thead>
 								<tbody>
 									<tr class="row" v-for="category in categories" :key="category.id">
-										<td class="col-8">
+										<td class="col-10">
 											<input type="text" class="form-control" id="inputSubject" v-model="category.name">
 										</td>
 										</td>
@@ -491,7 +495,10 @@
 					}
 				},
 				onExport: function () {
-					const backupStr = { categories: this.categories, tasks: this.tasks }
+					const backupStr = {
+						categories: this.categories,
+						tasks: this.tasks
+					}
 					this.download("backupTaskCruncher.txt", JSON.stringify(backupStr));
 				},
 				onImport: function () {
@@ -526,7 +533,9 @@
 					}
 				},
 				usedCategory: function (categoryId) {
-					return this.tasks.find(function(t) { return (t.category == categoryId); });
+					return this.tasks.find(function (t) {
+						return (t.category == categoryId);
+					});
 				},
 				onDelCategory: function (categoryId) {
 					if (!this.usedCategory(categoryId)) {
@@ -538,10 +547,23 @@
 						}
 					}
 				},
+				onAddCategory: function (categoryId) {
+					var name = prompt("New Category Name");
+					if (name.trim().length > 0) {
+						var id = Math.max.apply(Math, this.categories.map(function (o) {
+							return o.id;
+						}));
+						if (id < 0) {
+							id = 0;
+						}
+						id = id + 1;
+						this.categories.push({id: id, name: name});
+					}
+				},
 				onAddTask: function () {
 					var id = Math.max.apply(Math, this.tasks.map(function (o) {
 						return o.id;
-					}))
+					}));
 					if (id < 0) {
 						id = 0;
 					}
