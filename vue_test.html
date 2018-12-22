@@ -31,11 +31,11 @@
 			<div class="row" style="height:2px"></div>
 			<div class="row">
 				<button type="button" class="btn btn-info" v-for="category in baseCategories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]"
-				 v-on:click="currentCategory = category.id">
+				 v-on:click="onChangeCategory(category.id)">
 					{{ category.name }} </button>
 				&nbsp; &nbsp;
 				<button type="button" class="btn btn-secondary" v-for="category in categories" v-bind:key="category.id"
-				 v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
+				 v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="onChangeCategory(category.id)">
 					{{ category.name }} </button>
 				<button type="button" class="btn btn-dark" data-toggle="modal" data-target="#catSettingsModal">
 					<small>
@@ -520,6 +520,14 @@
 				formatDate: function (d) {
 					return d.toLocaleDateString() + " " + d.toLocaleTimeString().slice(0, 5);
 				},
+				onChangeCategory(id) {
+					this.currentCategory = id;
+					if ( id > 0 ) {
+						this.addTask.category = id;
+					} else {
+						this.addTask.category = 1;
+					}
+				},
 				onToday: function (task) {
 					task.today = !task.today;
 				},
@@ -675,7 +683,11 @@
 					this.addTask.subject = '';
 					this.addTask.tag = '';
 					this.addTask.recurring = false;
-					this.addTask.category = 1;
+					if ( this.currentCategory > 0 ) {
+						this.addTask.category = this.currentCategory;
+					} else {
+						this.addTask.category = 1;
+					}
 					this.addTask.comment = '';
 					this.addTask.log = '';
 					this.addTask.prio = 0;
