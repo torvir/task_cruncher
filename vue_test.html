@@ -37,7 +37,7 @@
 				<button type="button" class="btn btn-secondary" v-for="category in categories" v-bind:key="category.id"
 				 v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="currentCategory = category.id">
 					{{ category.name }} </button>
-				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#catSettingsModal">
+				<button type="button" class="btn btn-dark" data-toggle="modal" data-target="#catSettingsModal">
 					<small>
 						<i class="fas fa-cog"></i>
 						Categories
@@ -120,9 +120,15 @@
 						<div class="modal-body">
 							<form @submit.prevent="onAddTask">
 								<div class="form-row">
-									<div class="form-group col-12">
+									<div class="form-group col-8">
 										<label for="inputSubject">Subject</label>
 										<input type="text" class="form-control" id="inputSubject" v-model="addTask.subject">
+									</div>
+									<div class="form-group col-4">
+										<label for="selCategory">Category</label>
+										<select class="form-control" id="selCategory" v-model="addTask.category">
+											<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
+										</select>
 									</div>
 								</div>
 								<div class="form-row">
@@ -134,10 +140,13 @@
 										</small>
 									</div>
 									<div class="form-group col-4">
-										<label for="selCategory">Category</label>
-										<select class="form-control" id="selCategory" v-model="addTask.category">
-											<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
-										</select>
+										<label for="inputSubject">Group Tag</label>
+										<input type="text" list="tags" class="form-control" id="inputTag" v-model="addTask.tag">
+										<datalist id="tags">
+											<option v-for="uTag in uniqueTags" :key="uTag">
+												{{ uTag }}
+											</option>
+										</datalist>
 									</div>
 									<div class="form-group col-2">
 										<label for="selPrio">Prio</label>
@@ -158,7 +167,7 @@
 								</div>
 								<div class="form-row">
 									<div class="form-group col-10">
-										<button type="submit" class="btn btn-primary">Add Task</button>
+										<button type="submit" class="btn btn-primary">Save</button>
 									</div>
 									<div class="form-group col-2 text-right">
 										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -195,6 +204,7 @@
 							</td>
 
 							<td class="col-5 text-danger">
+								<span class="badge badge-secondary">{{ task.tag }}</span>
 								<del v-if="task.done" @click="onEdit(task)">{{ task.subject }}</del>
 								<b v-else @click="onEdit(task)">{{ task.subject }}</b>
 							</td>
@@ -228,6 +238,7 @@
 								<b class="text-muted">{{ task.prio }}</b>
 							</td>
 							<td class="col-5">
+								<span class="badge badge-secondary">{{ task.tag }}</span>
 								<del v-if="task.done" @click="onEdit(task)">{{ task.subject }}</del>
 								<b v-else-if="task.recurring" @click="onEdit(task)" class="text-primary">{{ task.subject }}</b>
 								<b v-else @click="onEdit(task)">{{ task.subject }}</b>
@@ -249,9 +260,15 @@
 							</td>
 						</template>
 						<template v-if="task.edit">
-							<div class="col-12">
+							<div class="col-8">
 								<label :for="'inputSubject'+task.id">Subject</label>
 								<input type="text" class="form-control" :id="'inputSubject'+task.id" v-model="task.editForm.subject" :disabled="task.archived">
+							</div>
+							<div class="col-4">
+								<label :for="'selCategory'+task.id">Category</label>
+								<select class="form-control" :id="'selCategory'+task.id" v-model="task.editForm.category" :disabled="task.archived">
+									<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
+								</select>
 							</div>
 							<div class="col-6">
 								<input type="checkbox" id="inputRecurring" v-model="task.editForm.recurring">
@@ -261,10 +278,13 @@
 								</small>
 							</div>
 							<div class="col-4">
-								<label :for="'selCategory'+task.id">Category</label>
-								<select class="form-control" :id="'selCategory'+task.id" v-model="task.editForm.category" :disabled="task.archived">
-									<option v-for="category in categories" :value="category.id"> {{ category.name }} </option>
-								</select>
+								<label :for="'inputTag'+task.id">Group Tag</label>
+								<input type="text" :list="'tags'+task.id" class="form-control" :id="'inputTag'+task.id" v-model="task.editForm.tag" :disabled="task.archived">
+								<datalist :id="'tags'+task.id">
+									<option v-for="uTag in uniqueTags" :key="uTag">
+										{{ uTag }}
+									</option>
+								</datalist>
 							</div>
 							<div class="col-2">
 								<label :for="'selPrio'+task.id">Prio</label>
@@ -381,6 +401,7 @@
 				tasks: [],
 				addTask: {
 					subject: '',
+					tag: '',
 					recurring: false,
 					category: 1,
 					prio: 0,
@@ -423,6 +444,16 @@
 			computed: {
 				extCategories: function () {
 					return this.baseCategories.concat(this.categories);
+				},
+				uniqueTags: function () {
+					var uTags = [];
+					for (var n = 0; n < this.tasks.length; n++) {
+						console.log(this.tasks[n].tag);
+						if (uTags.indexOf(this.tasks[n].tag) == -1) {
+							uTags.push(this.tasks[n].tag);
+						}
+					}
+					return uTags;
 				},
 				filteredTasks: function () {
 					if (this.currentCategory == -2) {
@@ -510,6 +541,7 @@
 					} else {
 						task.edit = true;
 						task.editForm.subject = task.subject;
+						task.editForm.tag = task.tag;
 						task.editForm.recurring = task.recurring;
 						task.editForm.category = task.category;
 						task.editForm.prio = task.prio;
@@ -519,6 +551,7 @@
 				},
 				onEditSave: function (task) {
 					task.subject = task.editForm.subject;
+					task.tag = task.editForm.tag;
 					task.recurring = task.editForm.recurring;
 					task.category = task.editForm.category;
 					task.prio = task.editForm.prio;
@@ -618,6 +651,7 @@
 						id: id,
 						category: this.addTask.category,
 						subject: this.addTask.subject,
+						tag: this.addTask.tag,
 						recurring: this.addTask.recurring,
 						comment: this.addTask.comment,
 						log: this.addTask.log,
@@ -639,6 +673,7 @@
 
 					});
 					this.addTask.subject = '';
+					this.addTask.tag = '';
 					this.addTask.recurring = false;
 					this.addTask.category = 1;
 					this.addTask.comment = '';
