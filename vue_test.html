@@ -143,7 +143,7 @@
 										<label for="inputSubject">Group Tag</label>
 										<input type="text" list="tags" class="form-control" id="inputTag" v-model="addTask.tag">
 										<datalist id="tags">
-											<option v-for="uTag in uniqueTags" :key="uTag">
+											<option v-for="uTag in uniqueTags()" :key="uTag">
 												{{ uTag }}
 											</option>
 										</datalist>
@@ -281,7 +281,7 @@
 								<label :for="'inputTag'+task.id">Group Tag</label>
 								<input type="text" :list="'tags'+task.id" class="form-control" :id="'inputTag'+task.id" v-model="task.editForm.tag" :disabled="task.archived">
 								<datalist :id="'tags'+task.id">
-									<option v-for="uTag in uniqueTags" :key="uTag">
+									<option v-for="uTag in uniqueTags()" :key="uTag">
 										{{ uTag }}
 									</option>
 								</datalist>
@@ -445,16 +445,6 @@
 				extCategories: function () {
 					return this.baseCategories.concat(this.categories);
 				},
-				uniqueTags: function () {
-					var uTags = [];
-					for (var n = 0; n < this.tasks.length; n++) {
-						console.log(this.tasks[n].tag);
-						if (uTags.indexOf(this.tasks[n].tag) == -1) {
-							uTags.push(this.tasks[n].tag);
-						}
-					}
-					return uTags;
-				},
 				filteredTasks: function () {
 					if (this.currentCategory == -2) {
 						this.tasks.sort(function (a, b) {
@@ -519,6 +509,15 @@
 				},
 				formatDate: function (d) {
 					return d.toLocaleDateString() + " " + d.toLocaleTimeString().slice(0, 5);
+				},
+				uniqueTags: function () {
+					var uTags = [];
+					for (var n = 0; n < this.tasks.length; n++) {
+						if (uTags.indexOf(this.tasks[n].tag) == -1) {
+							uTags.push(this.tasks[n].tag);
+						}
+					}
+					return uTags;
 				},
 				onChangeCategory(id) {
 					this.currentCategory = id;
