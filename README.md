@@ -1,10 +1,10 @@
 # task_cruncher
-A feature-rich TODO-list in a single html-file.
+A feature-rich TODO-list in a single html-file. It will run in a browser window using "local storage" for data persistence.
 
 ## Getting Started
 
-Just copy the html-file to your local disk.
-Start a browser and open the file. (Don't forget to bookmark it. You will yse it alot)
+Just copy the html-file to your local disk. Just one file, nothing more.  
+Then start a browser and open the file. (Don't forget to bookmark it. You will yse it alot)
 
 ### Prerequisites
 
