@@ -3,7 +3,7 @@ A feature-rich TODO-list in a single html-file. It will run in a browser window 
 
 ## Getting Started
 
-Just copy the html-file to your local disk. Just one file, nothing more.  
+Just copy the file <b>task_cruncher.html</b> to your local disk. Just one file, nothing more.  
 Then start a browser and open the file. (Don't forget to bookmark it. You will yse it alot)
 
 ### Prerequisites
