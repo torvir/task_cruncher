@@ -367,7 +367,7 @@
 				editedTask: null
 			},
 			mounted() {
-				const tasks = JSON.parse(localStorage.tasks, function (key, value) {
+				const tasks = JSON.parse(localStorage.TaskCruncher_tasks, function (key, value) {
 					if (key == "created" || key == "doneDate" || key == "archivedDate") {
 						return new Date(value);
 					} else {
@@ -378,7 +378,7 @@
 					this.tasks = tasks;
 				}
 
-				const categories = JSON.parse(localStorage.categories);
+				const categories = JSON.parse(localStorage.TaskCruncher_categories);
 				if (categories) {
 					this.categories = categories;
 				}
@@ -386,13 +386,13 @@
 			watch: {
 				tasks: {
 					handler: function () {
-						localStorage.tasks = JSON.stringify(this.tasks);
+						localStorage.TaskCruncher_tasks = JSON.stringify(this.tasks);
 					},
 					deep: true
 				},
 				categories: {
 					handler: function () {
-						localStorage.categories = JSON.stringify(this.categories);
+						localStorage.TaskCruncher_categories = JSON.stringify(this.categories);
 					},
 					deep: true
 				}
