@@ -34,7 +34,7 @@
 				 v-on:click="onChangeCategory(category.id)">
 					{{ category.name }} </button>
 				&nbsp; &nbsp;
-				<button type="button" class="btn btn-secondary" v-for="category in categories" v-bind:key="category.id"
+				<button type="button" class="btn btn-primary" v-for="category in categories" v-bind:key="category.id"
 				 v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="onChangeCategory(category.id)">
 					{{ category.name }} </button>
 				<button type="button" class="btn btn-dark" data-toggle="modal" data-target="#catSettingsModal">
@@ -87,22 +87,18 @@
 			</div>
 			<br>
 			<div class="row">
-				<div class="col-2 col-sm-4 col-lg-6">
+				<div class="col-6">
 					<button type="button" class="btn btn-success" @click="onAddTask">
 						<i class="fas fa-plus-square"></i>
 						Add Task
 					</button>
 				</div>
-				<div class="col-5 col-sm-4 col-lg-3">
-					<button type="button" class="btn btn-primary btn-block" @click="onExport">
+				<div class="col-6 text-right">
+					<button type="button" class="btn btn-secondary" @click="onExport" data-toggle="tooltip" data-placement="left" title="Export (Backup)">
 						<i class="fas fa-file-export"></i>
-						<b>Export</b> <i>(Backup)</i>
 					</button>
-				</div>
-				<div class="col-5 col-sm-4 col-lg-3">
-					<button type="button" class="btn btn-primary btn-block" @click="onImport">
+					<button type="button" class="btn btn-secondary" @click="onImport" data-toggle="tooltip" data-placement="left" title="Import (Restore)">
 						<i class="fas fa-file-import"></i>
-						<b>Import</b> <i>(Restore)</i>
 					</button>
 					<input type="file" hidden id="importFile" @change="onChangeImpFile" />
 				</div>
@@ -167,11 +163,9 @@
 									</div>
 								</div>
 								<div class="form-row">
-									<div class="form-group col-10">
-										<button type="submit" class="btn btn-primary">Save</button>
-									</div>
-									<div class="form-group col-2 text-right">
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<div class="form-group col text-right">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-primary">Save</button>	
 									</div>
 								</div>
 							</form>
@@ -529,7 +523,9 @@
 				},
 				onImport: function () {
 					// Redirect to File dialog
-					$("#importFile").click();
+					if (confirm('Import (Restore) will overwrite your database. Is this what you want?')) {
+						$("#importFile").click();
+					}
 				},
 				onChangeImpFile: function (evt) {
 					var file = evt.target.files[0];
