@@ -18,3 +18,42 @@ And you need an Internet connection as well. Because the html-page is using well
 * [Bootstrap.js](https://getbootstrap.com/) - Responsive grid system, extensive prebuilt components, and powerful plugins built on jQuery.
 * [jQuery](https://jquery.com/) - For HTML document traversal and manipulation, event handling, animation, and Ajax
 
+## Using Task Cruncher
+
+The application is mostly self-explanatory. And you can use it in the way that suits you.
+Here are some tips to get you starting.
+
+### Tasks
+
+Add a task using the green button. Write a subject and click <b>Save</b>. It's that simple.
+Click on the Edit icon (or on the subject text) to edit it.
+You can change the category for the task, or the priority if you want it higher up in the list.
+Tasks that belongs together can be tagged with a group-tag which will be visible as a badge.
+Click the calendar icon at the far left if you want it on the <i>Today list</i>.
+
+And when you have executed a task, tick the circle in the <i>Done column</i>.
+When the taske is marked as <i>Done</i> It will appear as crossed out. If you don't want it on your list you can archive it.
+An archived task can be restored by clicking <b>Undo</b>, or permanently deleted by clicking <b>Delete</b>.
+
+Through the task's lifetime dates are added. They are color-coded and begin with a letter.  
+<b>C</b> - Created  
+<b>D</b> - Done  
+<b>A</b> - Archived  
+
+### Categories
+
+The first four category buttons are <i>Helper Categories</i>.
+* <b>All</b> - Shows all tasks that aren't archived. The one with highest priority is at the top.
+* <b>Done</b> - Shows all done tasks. The most recent done task at the top. Even archived tasks are shown here.
+* <b>Archive</b> - The archive shows all archived tasks.
+* <b>Today</b> - The most important helper category. Shows all tasks that you want to see today.
+
+There are a few default categories that you can delete or edit to your own liking.
+On the far right in the Category button list there is one with a cogwheel. Click on it if you want to change the categories.
+You can only delete a category if no task is using it (even archived tasks).
+
+### Import and Export
+
+Use <b>Export</b> frequently to save your task database to a JSON-formatted file. Local storage normally takes care of persistance. But if it should fail the Exported file could be used to restore the data using <b>Import</b>.
+You can also use Export and Import if you want to use another browser. Or if you want to move the task database to another computer.
+
