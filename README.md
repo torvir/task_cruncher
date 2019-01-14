@@ -1,4 +1,4 @@
-# task_cruncher
+# task_cruncher.html
 A feature-rich TODO-list in a single html-file. It will run in a browser window using "local storage" for data persistence.
 
 ## Getting Started
@@ -17,6 +17,7 @@ And you need an Internet connection as well. Because the html-page is using well
 * [Vue.js](https://vuejs.org/) - A framework for reactive single page web applications
 * [Bootstrap.js](https://getbootstrap.com/) - Responsive grid system, extensive prebuilt components, and powerful plugins built on jQuery.
 * [jQuery](https://jquery.com/) - For HTML document traversal and manipulation, event handling, animation, and Ajax
+* [Font Awsome Icons](https://fontawesome.com/) - Icons for a modern looking UI
 
 ## Using Task Cruncher
 
