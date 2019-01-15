@@ -306,23 +306,32 @@
 		}
 	</script>
 	<script>
+		const BASE_ALL = -1;
+		const BASE_DONE = -2;
+		const BASE_ARCHIVE = -3;
+		const BASE_TAGGED = -4;
+		const BASE_TODAY = -5;		
 		new Vue({
 			el: '#app',
 			data: {
 				baseCategories: [{
-						id: -1,
+						id: BASE_ALL,
 						name: 'All'
 					},
 					{
-						id: -2,
+						id: BASE_DONE,
 						name: 'Done'
 					},
 					{
-						id: -3,
+						id: BASE_ARCHIVE,
 						name: 'Archive'
 					},
 					{
-						id: -4,
+						id: BASE_TAGGED,
+						name: 'Tagged'
+					},
+					{
+						id: BASE_TODAY,
 						name: 'Today'
 					}
 				],
@@ -357,7 +366,7 @@
 					comment: '',
 					log: ''
 				},
-				currentCategory: -4,
+				currentCategory: BASE_TODAY,
 				editedTask: null
 			},
 			mounted() {
@@ -396,13 +405,17 @@
 					return this.baseCategories.concat(this.categories);
 				},
 				filteredTasks: function () {
-					if (this.currentCategory == -2) {
+					if (this.currentCategory == BASE_DONE) {
 						this.tasks.sort(function (a, b) {
 							return b.doneDate - a.doneDate;
 						});
-					} else if (this.currentCategory == -3) {
+					} else if (this.currentCategory == BASE_ARCHIVE) {
 						this.tasks.sort(function (a, b) {
 							return b.archivedDate - a.archivedDate;
+						});
+					} else if (this.currentCategory == BASE_TAGGED) {
+						this.tasks.sort(function (a, b) {
+							return b.tag - a.tag;
 						});
 					} else {
 						// Sort on 1: Priority and 2: Created Date
@@ -422,18 +435,23 @@
 									return false;
 								}
 								return (element.category == this.currentCategory);
-							} else if (this.currentCategory == -1) {
+							} else if (this.currentCategory == BASE_ALL) {
 								if (element.archived) {
 									return false;
 								}
 								return true;
-							} else if (this.currentCategory == -2) {
+							} else if (this.currentCategory == BASE_DONE) {
 								return element.done;
-							} else if (this.currentCategory == -3) {
+							} else if (this.currentCategory == BASE_ARCHIVE) {
 								if (element.archived) {
 									return true;
 								}
-							} else if (this.currentCategory == -4) {
+							} else if (this.currentCategory == BASE_TAGGED) {
+								if (element.tag && (element.tag.length > 0)) {
+									return true;
+								}
+								return false;
+							} else if (this.currentCategory == BASE_TODAY) {
 								if (element.archived) {
 									return false;
 								}
@@ -616,7 +634,7 @@
 							id: id,
 							done: false,
 							archived: false,
-							today: (this.currentCategory == -4),
+							today: (this.currentCategory == BASE_TODAY),
 							created: new Date(),
 							doneDate: new Date(),
 							archivedDate: new Date()
