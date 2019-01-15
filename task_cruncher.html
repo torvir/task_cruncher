@@ -415,7 +415,7 @@
 						});
 					} else if (this.currentCategory == BASE_TAGGED) {
 						this.tasks.sort(function (a, b) {
-							return b.tag - a.tag;
+							return String(a.tag).localeCompare(b.tag);
 						});
 					} else {
 						// Sort on 1: Priority and 2: Created Date
@@ -447,7 +447,7 @@
 									return true;
 								}
 							} else if (this.currentCategory == BASE_TAGGED) {
-								if (element.tag && (element.tag.length > 0)) {
+								if (element.tag.length > 0 && !element.archived) {
 									return true;
 								}
 								return false;
