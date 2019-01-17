@@ -26,7 +26,7 @@
 					 class="img-fluid float-left" alt="">
 				</div>
 				<div class="col-2 col-sm-4 col-md-6 col-lg-8">
-					<small class="align-middle"><i>v1.0 by Torbj&ouml;rn Sj&ouml;str&ouml;m</i></small>
+					<small class="align-middle"><i>v1.1 by Torbj&ouml;rn Sj&ouml;str&ouml;m</i></small>
 				</div>
 			</div>
 			<div class="row" style="height:2px"></div>
@@ -38,8 +38,8 @@
 					{{ view.name }} </button>
 				&nbsp; &nbsp;
 				<!-- CATEGORY buttons -->
-				<button type="button" class="btn btn-primary" v-for="category in categories" v-bind:key="category.id"
-				 v-bind:class="[{ active: currentCategory === category.id }]" v-on:click="onChangeCategory(category.id)">
+				<button type="button" class="btn btn-primary" v-for="category in categories" v-bind:key="category.id" v-bind:class="[{ active: currentCategory === category.id }]"
+				 v-on:click="onChangeCategory(category.id)">
 					{{ category.name }} </button>
 				<button type="button" class="btn btn-dark" data-toggle="modal" data-target="#catSettingsModal">
 					<small>
@@ -94,18 +94,58 @@
 			<!-- Second Button row -->
 			<div class="row">
 				<!-- ADD button -->
-				<div class="col-6">
+				<div class="col-3">
 					<button type="button" class="btn btn-success" @click="onAddTask">
 						<i class="fas fa-plus-square"></i>
 						Add Task
 					</button>
 				</div>
+				<!-- Pomodoro buttons -->
+				<div class="col-6">
+					<div class="row">
+						<div class="col text-center">
+							<span v-if="!timerStarted"> Start </span>
+							Pomodoro Timer
+							<span v-if="timerStarted"> {{ minutesLeft }} </span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col text-center">
+							<button v-if="!timerStarted && !timerPaused" type="button" class="btn btn-warning btn-sm" @click="onStartTimer(10)">
+								10 min
+							</button>
+							<button v-if="!timerStarted && !timerPaused" type="button" class="btn btn-warning btn-sm" @click="onStartTimer(15)">
+								15 min
+							</button>
+							<button v-if="!timerStarted && !timerPaused" type="button" class="btn btn-warning btn-sm" @click="onStartTimer(20)">
+								20 min
+							</button>
+							<button v-if="!timerStarted && !timerPaused" type="button" class="btn btn-warning btn-sm" @click="onStartTimer(25)">
+								25 min
+							</button>
+							<button v-if="!timerStarted && !timerPaused" type="button" class="btn btn-warning btn-sm" @click="onStartTimer(30)">
+								30 min
+							</button>
+							<button v-if="timerStarted && !timerPaused" type="button" class="btn btn-warning btn-sm" @click="onPauseTimer">
+								Pause
+							</button>
+							<button v-if="timerStarted && timerPaused" type="button" class="btn btn-success btn-sm" @click="onResumeTimer">
+								Resume
+							</button>
+							<button v-if="timerStarted" type="button" class="btn btn-danger btn-sm" @click="onStopTimer">
+								Stop
+							</button>
+						</div>
+					</div>
+				</div>
 				<!-- EXPORT and IMPORT buttons -->
-				<div class="col-6 text-right">
-					<button type="button" class="btn btn-secondary" @click="onExport" data-toggle="tooltip" data-placement="left" title="Export (Backup)">
+				<div class="col-3 text-right">
+					<button type="button" class="btn btn-secondary" @click="onExport" data-toggle="tooltip" data-placement="left"
+					 title="Export (Backup)">
 						<i class="fas fa-file-export"></i>
 					</button>
-					<button type="button" class="btn btn-secondary" @click="onImport" data-toggle="tooltip" data-placement="left" title="Import (Restore)">
+					<button type="button" class="btn btn-secondary" @click="onImport" data-toggle="tooltip" data-placement="left"
+					 title="Import (Restore)">
 						<i class="fas fa-file-import"></i>
 					</button>
 					<input type="file" hidden id="importFile" @change="onChangeImpFile" />
@@ -173,8 +213,8 @@
 								</div>
 								<div class="form-row">
 									<div class="form-group col text-right">
-											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-											<button type="submit" class="btn btn-primary">Save</button>	
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										<button type="submit" class="btn btn-primary">Save</button>
 									</div>
 								</div>
 							</form>
@@ -281,7 +321,7 @@
 	 crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 	 crossorigin="anonymous"></script>
-	 <!-- Script to test if local storage and file APIs are supported by the browser -->
+	<!-- Script to test if local storage and file APIs are supported by the browser -->
 	<script>
 		function storageAvailable(type) {
 			try {
@@ -321,6 +361,7 @@
 			alert('The File APIs are not fully supported in this browser.');
 		}
 	</script>
+
 	<!-- VUE Instance -->
 	<script>
 		const VIEW_ALL = -1;
@@ -328,7 +369,7 @@
 		const VIEW_ARCHIVE = -3;
 		const VIEW_TAGGED = -4;
 		const VIEW_TODAY = -5;
-		
+
 		new Vue({
 			el: '#app',
 			data: {
@@ -385,7 +426,11 @@
 					log: ''
 				},
 				currentCategory: VIEW_TODAY,
-				editedTask: null
+				editedTask: null,
+				timerVar: null,
+				timeLeft: 0,
+				timerStarted: false,
+				timerPaused: false
 			},
 			mounted() {
 				const tasks = JSON.parse(localStorage.TaskCruncher_tasks, function (key, value) {
@@ -478,6 +523,12 @@
 						},
 						this
 					);
+				},
+				minutesLeft: function () {
+					sec = this.timeLeft;
+					var m = Math.floor(sec / 60);
+					var s = Math.floor(sec % 60);
+					return ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
 				}
 			},
 			methods: {
@@ -507,7 +558,7 @@
 				},
 				onChangeCategory(id) {
 					this.currentCategory = id;
-					if ( id > 0 ) {
+					if (id > 0) {
 						this.addTask.category = id;
 					} else {
 						this.addTask.category = 1;
@@ -626,7 +677,7 @@
 					this.addTask.subject = '';
 					this.addTask.tag = '';
 					this.addTask.recurring = false;
-					if ( this.currentCategory > 0 ) {
+					if (this.currentCategory > 0) {
 						this.addTask.category = this.currentCategory;
 					} else {
 						this.addTask.category = 1;
@@ -638,7 +689,7 @@
 					$("#addTaskModal").modal("show");
 				},
 				onAddTaskSave: function () {
-					if ( this.editedTask == null ) {
+					if (this.editedTask == null) {
 						// This is a new task. Create a unique id 
 						var id = Math.max.apply(Math, this.tasks.map(function (o) {
 							return o.id;
@@ -648,7 +699,7 @@
 						}
 						id = id + 1;
 						// Add the new task. It only contains some values for now
-						this.tasks.push({ 
+						this.tasks.push({
 							id: id,
 							done: false,
 							archived: false,
@@ -671,6 +722,34 @@
 					// Close the modal
 					$("#addTaskModal").modal("hide");
 
+				},
+				decrTimer: function () {
+					this.timeLeft -= 1;
+					if (this.timeLeft <= 0) {
+						this.onStopTimer();
+						alert("Your Pomodoro time is Up");
+					}
+				},
+				onStartTimer: function (minutes) {
+					this.timerStarted = true;
+					this.timerPaused = false;
+					this.timeLeft = minutes * 60;
+					this.timerVar = setInterval(this.decrTimer, 1000);
+				},
+				onPauseTimer: function () {
+					this.timerStarted = true;
+					this.timerPaused = true;
+					clearInterval(this.timerVar);
+				},
+				onResumeTimer: function () {
+					this.timerStarted = true;
+					this.timerPaused = false;
+					this.timerVar = setInterval(this.decrTimer, 1000);
+				},
+				onStopTimer: function () {
+					this.timerStarted = false;
+					this.timerPaused = false;
+					clearInterval(this.timerVar);
 				}
 			}
 		});
