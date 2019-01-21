@@ -706,18 +706,26 @@
 							today: (this.currentCategory == VIEW_TODAY),
 							created: new Date(),
 							doneDate: new Date(),
-							archivedDate: new Date()
+							archivedDate: new Date(),
+							subject: this.addTask.subject,
+							tag: this.addTask.tag,
+							recurring: this.addTask.recurring,
+							category: this.addTask.category,
+							prio: this.addTask.prio,
+							comment: this.addTask.comment,
+							log: this.addTask.log
 						});
-						this.editedTask = this.tasks[this.tasks.length - 1];
+					} else {
+						// This is en existing task that was edited
+						this.editedTask.subject = this.addTask.subject;
+						this.editedTask.tag = this.addTask.tag;
+						this.editedTask.recurring = this.addTask.recurring;
+						this.editedTask.category = this.addTask.category;
+						this.editedTask.prio = this.addTask.prio;
+						this.editedTask.comment = this.addTask.comment;
+						this.editedTask.log = this.addTask.log;
 					}
-					// These attributes are filled in for both Added and Edited tasks
-					this.editedTask.subject = this.addTask.subject;
-					this.editedTask.tag = this.addTask.tag;
-					this.editedTask.recurring = this.addTask.recurring;
-					this.editedTask.category = this.addTask.category;
-					this.editedTask.prio = this.addTask.prio;
-					this.editedTask.comment = this.addTask.comment;
-					this.editedTask.log = this.addTask.log;
+					// Clear variable for next add/edit
 					this.editedTask = null;
 					// Close the modal
 					$("#addTaskModal").modal("hide");
