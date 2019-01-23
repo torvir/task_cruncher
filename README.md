@@ -63,5 +63,6 @@ You can also use Export and Import if you want to use another browser. Or if you
 
 ### Pomodoro Timer
 
-Use the Pomodoro Timer to focus on one task for a limited time. 25 minutes is the recommended time. But there are tasks that you know beforhand that they takes less or more time. So there are options.
-When the timer has counted down to zero a silent alarm (an alert window) is released.
+Use the Pomodoro Timer to focus on one task for a limited time.  
+This is a way to commit to just one task and forget about everything else. 25 minutes is the recommended time. But there are probably tasks that you know beforhand that they takes less or more time. So there are options.  
+When the timer has counted down to zero, you will hear a brief beep and an alert box is telling you that the time is up.
