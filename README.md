@@ -61,3 +61,7 @@ You can only delete a category if no task is using it (even archived tasks).
 Use <b>Export</b> frequently to save your task database to a JSON-formatted file. Local storage normally takes care of persistance. But if it should fail the Exported file could be used to restore the data using <b>Import</b>.
 You can also use Export and Import if you want to use another browser. Or if you want to move the task database to another computer.
 
+### Pomodoro Timer
+
+Use the Pomodoro Timer to focus on one task for a limited time. 25 minutes is the recommended time. But there are tasks that you know beforhand that they takes less or more time. So there are options.
+When the timer has counted down to zero a silent alarm (an alert window) is released.
