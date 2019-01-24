@@ -241,8 +241,11 @@
 					<br>
 				</div>
 				<div class="col-4">
-						<input type="checkbox" v-model="searchArchived">
-						Include Archived tasks
+					<input type="checkbox" v-model="searchDone">
+					Include Done tasks
+					<br>
+					<input type="checkbox" v-model="searchArchived">
+					Include Archived tasks
 				</div>
 			</div>
 			<!-- Task Table -->
@@ -470,7 +473,8 @@
 				timerPaused: false,
 				searchString: '',
 				searchFilter: '',
-				searchArchived: false
+				searchArchived: false,
+				searchDone: false
 			},
 			mounted() {
 				const tasks = JSON.parse(localStorage.TaskCruncher_tasks, function (key, value) {
@@ -560,7 +564,12 @@
 								}
 								return element.today;
 							} else if (this.currentCategory == VIEW_SEARCH) {
+								// Include Archived tasks?
 								if (element.archived && !this.searchArchived) {
+									return false;
+								}
+								// Include Done tasks?
+								if (element.done && !this.searchDone) {
 									return false;
 								}
 								// Empty searc string shouldn't give any results
@@ -569,9 +578,9 @@
 								}
 								// Create a regexp from the string
 								let searchPattern = new RegExp(this.searchFilter, "i");
-								if (element.subject.search(searchPattern) >= 0
-									|| element.comment.search(searchPattern) >= 0
-									|| element.log.search(searchPattern) >= 0) {
+								if (element.subject.search(searchPattern) >= 0 ||
+									element.comment.search(searchPattern) >= 0 ||
+									element.log.search(searchPattern) >= 0) {
 									return true;
 								}
 
