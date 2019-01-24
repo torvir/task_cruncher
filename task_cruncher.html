@@ -26,7 +26,7 @@
 					 class="img-fluid float-left" alt="">
 				</div>
 				<div class="col-2 col-sm-4 col-md-6 col-lg-8">
-					<small class="align-middle"><i>v1.1 by Torbj&ouml;rn Sj&ouml;str&ouml;m</i></small>
+					<small class="align-middle"><i>v1.2 by Torbj&ouml;rn Sj&ouml;str&ouml;m</i></small>
 				</div>
 			</div>
 			<div class="row" style="height:2px"></div>
@@ -104,9 +104,8 @@
 				<div class="col-6">
 					<div class="row">
 						<div class="col text-center">
-							<span v-if="!timerStarted"> <b>Start</b> </span>
-							<b>Pomodoro Timer</b>
-							<span v-if="timerStarted"> <b>{{ minutesLeft }}</b> </span>
+							<span v-if="!timerStarted"> <b>Start Pomodoro Timer</b> </span>
+							<span v-if="timerStarted"> <h3>Pomodoro Time Left {{ minutesLeft }}</h3> </span>
 						</div>
 					</div>
 					<div class="row">
