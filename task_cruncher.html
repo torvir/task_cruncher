@@ -580,7 +580,8 @@
 								let searchPattern = new RegExp(this.searchFilter, "i");
 								if (element.subject.search(searchPattern) >= 0 ||
 									element.comment.search(searchPattern) >= 0 ||
-									element.log.search(searchPattern) >= 0) {
+									element.log.search(searchPattern) >= 0 ||
+									element.tag.search(searchPattern) >= 0) {
 									return true;
 								}
 
