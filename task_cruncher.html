@@ -628,7 +628,7 @@
 					if (id > 0) {
 						this.addTask.category = id;
 					} else {
-						this.addTask.category = 1;
+						this.addTask.category = this.categories[0].id;
 					}
 				},
 				onToday: function (task) {
@@ -747,7 +747,7 @@
 					if (this.currentCategory > 0) {
 						this.addTask.category = this.currentCategory;
 					} else {
-						this.addTask.category = 1;
+						this.addTask.category = this.categories[0].id;
 					}
 					this.addTask.comment = '';
 					this.addTask.log = '';
