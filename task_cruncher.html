@@ -638,12 +638,14 @@
 					task.done = !task.done;
 					if (task.done) {
 						task.doneDate = new Date();
+						task.prio = 0;
 					}
 				},
 				onArchive: function (task) {
 					task.archived = !task.archived;
 					if (task.archived) {
 						task.archivedDate = new Date();
+						task.prio = 0;
 					}
 				},
 				onEdit: function (task) {
